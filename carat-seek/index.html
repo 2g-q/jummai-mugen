@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#08142e">
+<title>カラットシーク｜3つの酒どころ診断</title>
+<style>
+:root{--navy:#08142e;--gold:#caa96a;--paper:#f7f3ea;--ink:#20283a;--muted:#6f7480}
+*{box-sizing:border-box}html{background:var(--navy)}body{margin:0;color:var(--ink);background:var(--paper);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif;line-height:1.75;min-height:100vh}
+main{max-width:520px;margin:auto;min-height:100vh;background:#fff;box-shadow:0 0 50px #0003}.hero{padding:54px 26px 42px;text-align:center;color:#f8f4e9;background:radial-gradient(circle at 50% 0,#263e75,var(--navy) 68%)}
+.eyebrow{color:var(--gold);font-size:12px;letter-spacing:.2em}.hero h1{margin:10px 0 8px;font-family:serif;font-size:30px;letter-spacing:.05em}.hero p{margin:0;color:#d9ddea;font-size:14px}
+.panel{padding:30px 22px 44px}.progress{display:flex;gap:7px;margin-bottom:25px}.progress span{height:4px;flex:1;border-radius:4px;background:#ddd}.progress span.on{background:var(--gold)}
+h2{font-family:serif;font-size:23px;line-height:1.55;margin:0 0 22px}.choices{display:grid;gap:12px}.choice,.primary,.secondary{width:100%;min-height:52px;border-radius:12px;font:inherit;font-weight:700;cursor:pointer}.choice{padding:13px 16px;text-align:left;background:#fff;border:1px solid #d7d1c5;color:var(--ink)}.choice:hover,.choice:focus-visible{border-color:var(--gold);outline:2px solid #caa96a55}
+.result{text-align:center}.result .place{font-family:serif;font-size:33px;color:var(--navy);margin:8px 0}.result .tag{display:inline-block;padding:4px 14px;border:1px solid var(--gold);border-radius:30px;color:#806329;font-size:13px}.result p{text-align:left}.primary,.secondary{display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:12px;padding:12px 16px}.primary{border:0;background:#06c755;color:#fff}.secondary{border:1px solid var(--gold);background:#fff;color:var(--navy)}
+.note{font-size:12px;color:var(--muted);margin-top:24px}.hidden{display:none}.brand{font-size:13px;color:var(--muted);text-align:center;padding:0 20px 24px}
+</style>
+</head>
+<body><main>
+<header class="hero"><div class="eyebrow">CARAT SEEK</div><h1>3つの酒どころ診断</h1><p>3つの質問から、今のあなたに近い酒どころをご案内します。</p></header>
+<section class="panel" aria-live="polite">
+  <div id="quiz"><div class="progress" aria-label="進み具合"><span></span><span></span><span></span></div><h2 id="question"></h2><div class="choices" id="choices"></div></div>
+  <div id="result" class="result hidden"><div class="tag">あなたに近い酒どころ</div><div class="place" id="place"></div><p id="description"></p><a class="primary" href="https://line.me/R/ti/p/@881rdcdg">LINEで友だちになって続きを見る</a><a class="secondary" href="https://jummai-mugen.com/">ロブ6の販売ページへ戻る</a><p class="note">現在は9月5日の仕様確認用です。回答保存・ポイント・クーポンは、LINE連携後に有効化します。</p></div>
+</section><div class="brand">じゅんまいムゲン</div>
+</main>
+<script>
+const questions=[
+ {q:'お酒と一緒に召し上がるなら、どのお料理でしょう。',a:[['肉や揚げ物など、味のしっかりしたもの','nada'],['煮物や焼き魚など、出汁の効いたもの','fushimi'],['お刺身や冷奴など、素材の味が立つもの','hiroshima']]},
+ {q:'お酒そのものは、どちらがお好みですか。',a:[['飲みごたえのある、力強い味','nada'],['やわらかく、ふくらみのある味','fushimi'],['澄んでいて、すっきりした味','hiroshima']]},
+ {q:'召し上がるのは、どんな場面が多いでしょう。',a:[['一日の終わりに、しっかり一杯','nada'],['どなたかと話しながら、ゆっくり','fushimi'],['ひとりで、静かに味わう','hiroshima']]}
+];
+const results={
+ nada:['灘（なだ）','六甲山から流れる水はミネラルが多く、発酵を力強く進めます。飲みごたえのある酒が多く、「灘の男酒」と呼ばれてきました。'],
+ fushimi:['伏見（ふしみ）','伏見で汲まれる軟水は、発酵をおだやかに進めます。口当たりがやわらかく、きめ細かな酒に仕上がります。'],
+ hiroshima:['広島（西条）','ミネラルの少ない軟水を生かす独自の醸造技術が磨かれた土地です。香りがあり、やわらかく澄んだ味わいで知られます。']
+};
+let step=0,scores={nada:0,fushimi:0,hiroshima:0};
+const q=document.getElementById('question'),choices=document.getElementById('choices'),bars=[...document.querySelectorAll('.progress span')];
+function render(){q.textContent=questions[step].q;bars.forEach((b,i)=>b.classList.toggle('on',i<=step));choices.replaceChildren(...questions[step].a.map(([label,key])=>{const b=document.createElement('button');b.className='choice';b.textContent=label;b.onclick=()=>answer(key);return b}))}
+function answer(key){scores[key]++;step++;if(step<questions.length)return render();const best=Object.keys(scores).sort((a,b)=>scores[b]-scores[a])[0];document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('place').textContent=results[best][0];document.getElementById('description').textContent=results[best][1]}
+render();
+</script></body></html>

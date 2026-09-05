@@ -655,7 +655,10 @@
     background:rgba(16,26,51,.96); border:1px solid rgba(201,169,106,.75); border-radius:100px;
     box-shadow:0 8px 22px rgba(0,0,0,.28); cursor:pointer; padding:7px 16px 7px 7px;
     color:#e3c88a; font-size:13px; letter-spacing:.06em; line-height:1;
-    display:flex; align-items:center; gap:10px; }
+    display:flex; align-items:center; gap:10px;
+    opacity:0; visibility:hidden; transform:translateY(8px);
+    transition:opacity .25s ease, transform .25s ease, visibility .25s ease; }
+  .kiki-fab.show{ opacity:1; visibility:visible; transform:translateY(0); }
   /* 🔴顔を出す。以前 display:none にしていたためテキストだけの小さいボタンになっていた
      (2026-08-27 CIO指摘「唎酒師にきくが小さい」)。ヒーローのバッジは外して重複を避ける。 */
   .kiki-fab img{ display:block; width:42px; height:42px; border-radius:50%;
@@ -1640,6 +1643,8 @@
     var finalTop = finalSec.getBoundingClientRect().top;
     var show = heroBottom < 0 && finalTop > window.innerHeight * 0.55;
     sticky.classList.toggle('show', show);
+    var kikiFab = document.getElementById('kikiFab');
+    if(kikiFab) kikiFab.classList.toggle('show', heroBottom < 0);
   }
   window.addEventListener('scroll', updateSticky, { passive:true });
   updateSticky();

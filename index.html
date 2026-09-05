@@ -701,6 +701,13 @@
   .kiki-msg.bot .tx{ flex:1; min-width:0; }
   .kiki-msg.luika{ background:#fdf8f2; border-color:#efe0cf; }
   .kiki-msg.me{ background:#101a33; color:#fff; padding:9px 12px; margin-left:auto; max-width:80%; text-align:left; }
+  .sake-results{ display:grid; gap:8px; margin:2px 0 12px; }
+  .sake-result{ background:#fff; border:1px solid #ddd4c2; padding:10px 12px; color:#3a352e; }
+  .sake-result .brewery{ font-size:10px; color:#8a8274; letter-spacing:.05em; }
+  .sake-result .product{ margin:2px 0 4px; color:#101a33; font-weight:700; font-size:13px; }
+  .sake-result .taste{ margin:0 0 5px; font-size:11.5px; line-height:1.65; }
+  .sake-result .meta{ font-size:10.5px; color:#7d7466; }
+  .sake-result a{ color:#8a6d33; text-decoration:underline; }
   .kiki-qs{ padding:10px 12px 14px; border-top:1px solid #eae5da; background:#fff; display:grid; gap:7px; }
   .kiki-q{ border:1px solid var(--gold,#c9a96a); color:#8a6d33; background:#fff; font-size:12.5px; line-height:1.6;
     padding:8px 11px; text-align:left; cursor:pointer; }
@@ -1235,6 +1242,7 @@
   </div>
 </div>
 
+<script src="sake-db.js"></script>
 <script>
 (function(){
   /* ============ 多言語辞書(ja / en / zh=繁體中文) ============ */
@@ -1887,6 +1895,31 @@
     }
     /* ---- 三つの酒どころ診断 ---- */
     var diagIdx=-1, diagScore=null;
+    function sayProducts(region){
+      var langCode=lang(), all=window.CARAT_SAKE_DB||[];
+      var items=all.filter(function(item){ return item.region===region; }).slice(0,3);
+      if(!items.length) return;
+      var labels={
+        ja:{title:'この地域から、まず三本',taxIn:'税込',taxOut:'税別',priceOpen:'価格は公式ページで確認',source:'蔵元公式'},
+        en:{title:'Three bottles to begin with',taxIn:'tax included',taxOut:'before tax',priceOpen:'See official page for price',source:'Official brewery page'},
+        zh:{title:'先從這個產地選三款',taxIn:'含稅',taxOut:'未稅',priceOpen:'價格請見官方頁面',source:'酒藏官方頁面'}
+      };
+      var L=labels[langCode]||labels.ja;
+      say('bot', L.title, 'roburi');
+      var wrap=document.createElement('div'); wrap.className='sake-results';
+      items.forEach(function(item){
+        var card=document.createElement('div'); card.className='sake-result';
+        var brewery=document.createElement('div'); brewery.className='brewery'; brewery.textContent=item.brewery+' · '+item.category;
+        var product=document.createElement('div'); product.className='product'; product.textContent=item.name;
+        var taste=document.createElement('p'); taste.className='taste'; taste.textContent=(item.taste[langCode]||item.taste.ja);
+        var meta=document.createElement('div'); meta.className='meta';
+        var price=item.price ? '¥'+item.price.amount.toLocaleString()+' '+(item.price.taxIncluded?L.taxIn:L.taxOut) : L.priceOpen;
+        meta.appendChild(document.createTextNode(item.volumeMl+'ml · '+price+' · '));
+        var link=document.createElement('a'); link.href=item.sourceUrl; link.target='_blank'; link.rel='noopener noreferrer'; link.textContent=L.source;
+        meta.appendChild(link); card.appendChild(brewery); card.appendChild(product); card.appendChild(taste); card.appendChild(meta); wrap.appendChild(card);
+      });
+      log.appendChild(wrap); log.scrollTop=log.scrollHeight;
+    }
     function diagNext(){
       var D=DIAG[lang()]||DIAG.ja;
       diagIdx++;
@@ -1895,10 +1928,11 @@
         for(var k in diagScore){ if(best===null || diagScore[k]>diagScore[best]) best=k; }
         var r=D.res[best];
         say('bot', r[0]+' — '+r[1], 'roburi');
-        setTimeout(function(){ say('bot', D.close, 'roburi'); }, 500);
-        setTimeout(function(){ say('bot', D.luika, 'luika'); }, 1050);
+        setTimeout(function(){ sayProducts(best); }, 450);
+        setTimeout(function(){ say('bot', D.close, 'roburi'); }, 950);
+        setTimeout(function(){ say('bot', D.luika, 'luika'); }, 1450);
         diagIdx=-1; diagScore=null;
-        setTimeout(renderQs, 1100);
+        setTimeout(renderQs, 1500);
         return;
       }
       var item=D.qs[diagIdx];

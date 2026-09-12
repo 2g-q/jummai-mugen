@@ -32,6 +32,9 @@ h2{font-family:serif;font-size:23px;line-height:1.55;margin:0 0 22px}.choices{di
 </section><div class="brand">じゅんまいムゲン</div>
 </main>
 <script src="sake-db.js?v=20260905-1"></script>
+<script src="integration-config.js?v=20260912-2"></script>
+<script src="rewards.js?v=20260912-2"></script>
+<script src="liff-sync.js?v=20260912-1"></script>
 <script>
 const questions=[
  {q:'お酒と一緒に召し上がるなら、どのお料理でしょう。',a:[['肉や揚げ物など、味のしっかりしたもの','nada'],['煮物や焼き魚など、出汁の効いたもの','fushimi'],['お刺身や冷奴など、素材の味が立つもの','hiroshima']]},
@@ -84,10 +87,20 @@ function searchSake(){
 }
 function saveDiagnosis(best){
  const record={version:1,answers:selectedAnswers.slice(),scores:{...scores},result:best,savedAt:new Date().toISOString()};
- try{localStorage.setItem(DIAGNOSIS_STORAGE_KEY,JSON.stringify(record));return true}catch(error){return false}
+ try{
+  localStorage.setItem(DIAGNOSIS_STORAGE_KEY,JSON.stringify(record));
+  // 診断は端末内へ保存するだけ。ポイントは購入確認後、クーポンは友だち追加時に別処理する。
+  if(window.CaratRewards){
+   window.CaratRewards.recordDiagnosis(record,window.CARAT_INTEGRATION_CONFIG,localStorage);
+   if(window.CaratLiffSync)window.CaratLiffSync.syncLatest(window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage);
+  }
+  return true;
+ }catch(error){return false}
 }
 function answer(key){selectedAnswers.push(key);scores[key]++;step++;if(step<questions.length)return render();const best=Object.keys(scores).sort((a,b)=>scores[b]-scores[a])[0];saveDiagnosis(best);document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('place').textContent=results[best][0];document.getElementById('description').textContent=results[best][1];showCandidates(best)}
 render();
+// 前回の同期が未完了なら、次回表示時にも安全に再試行する。sent済みは再送しない。
+if(window.CaratLiffSync&&window.CaratRewards)window.CaratLiffSync.syncLatest(window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage);
 document.getElementById('sakeSearchButton').addEventListener('click',searchSake);
 document.getElementById('sakeSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();searchSake()}});
 </script></body></html>

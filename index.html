@@ -654,7 +654,7 @@
   .kiki-fab{ position:fixed; left:14px; bottom:96px; z-index:60;
     background:rgba(16,26,51,.96); border:1px solid rgba(201,169,106,.75); border-radius:100px;
     box-shadow:0 8px 22px rgba(0,0,0,.28); cursor:pointer; padding:7px 16px 7px 7px;
-    color:#e3c88a; font-size:13px; letter-spacing:.06em; line-height:1;
+    color:#e3c88a; font:inherit; font-size:13px; letter-spacing:.06em; line-height:1;
     display:flex; align-items:center; gap:10px;
     opacity:0; visibility:hidden; transform:translateY(8px);
     transition:opacity .25s ease, transform .25s ease, visibility .25s ease; }
@@ -691,7 +691,7 @@
   .kiki-head .av img+img{ margin-left:-9px; }
   .kiki-head .nm{ font-size:13px; letter-spacing:.06em; }
   .kiki-head .rl{ font-size:10px; color:#b9b2a4; display:block; margin-top:2px; }
-  .kiki-head .cl{ margin-left:auto; color:#b9b2a4; font-size:18px; cursor:pointer; line-height:1; }
+  .kiki-head .cl{ margin-left:auto; padding:8px; border:0; background:transparent; color:#b9b2a4; font:inherit; font-size:18px; cursor:pointer; line-height:1; }
   .kiki-log{ padding:14px; max-height:min(34vh,240px); max-height:min(34dvh,240px);
     overflow-y:auto; -webkit-overflow-scrolling:touch; background:#faf8f4; }
   .kiki-msg{ font-size:13px; line-height:1.9; margin-bottom:10px; }
@@ -1179,12 +1179,12 @@
 </footer>
 
 <!-- ============ 唎酒師チャット ============ -->
-<div class="kiki-fab" id="kikiFab" role="button" tabindex="0" aria-label="唎酒師にきく"><img src="rob6-assets/kikisake_icon.png" alt="国際唎酒師"><span class="lbl" data-i18n="kikiFab">唎酒師にきく</span></div>
-<div class="kiki-panel" id="kikiPanel" aria-live="polite">
+<button type="button" class="kiki-fab" id="kikiFab" aria-label="唎酒師にきく" aria-expanded="false" aria-controls="kikiPanel"><img src="rob6-assets/kikisake_icon.png" alt=""><span class="lbl" data-i18n="kikiFab">唎酒師にきく</span></button>
+<div class="kiki-panel" id="kikiPanel" role="dialog" aria-modal="false" aria-label="唎酒師への質問" aria-hidden="true" aria-live="polite">
   <div class="kiki-head">
     <div class="av"><img src="rob6-assets/kikisake_icon.png" alt="国際唎酒師"><img src="rob6-assets/luika_icon.png" alt="ルイカ"></div>
     <div><span class="nm" data-i18n="kikiName">唎酒師 ＆ ルイカ</span><span class="rl" data-i18n="kikiRole">国際唎酒師と、お店のスタッフ</span></div>
-    <span class="cl" id="kikiClose" role="button" tabindex="0" aria-label="閉じる">×</span>
+    <button type="button" class="cl" id="kikiClose" aria-label="閉じる">×</button>
   </div>
   <div class="kiki-log" id="kikiLog">
     <div class="kiki-msg bot"><img class="ico" src="rob6-assets/kikisake_icon.png" alt="国際唎酒師"><span class="tx" data-i18n="kikiHello">こんばんは。日本酒のことでしたら、なんなりと。まずは気になるものをお選びください。</span></div>
@@ -1790,6 +1790,13 @@
     var close=document.getElementById('kikiClose'), log=document.getElementById('kikiLog'), qs=document.getElementById('kikiQs');
     if(!fab||!panel||!qs||!log) return;
     function lang(){ return (window.__kikiLang||'ja'); }
+    function setPanelOpen(open, restoreFocus){
+      panel.classList.toggle('open', open);
+      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if(open) close.focus();
+      else if(restoreFocus) fab.focus();
+    }
     // 🔴2026-08-28 CIO指示「ロイリは唎酒師ではないので、ここには使わないで」。
     //   チャットの唎酒師は専用アイコン(kikisake_icon.png)。本文中のロイリ(ブランドキャラクター)は残す。
     var ICON={ roburi:'rob6-assets/kikisake_icon.png', luika:'rob6-assets/luika_icon.png' };
@@ -1925,8 +1932,8 @@
       qs.appendChild(qb);
     }
     window.__kikiRender = renderQs;
-    window.__kikiStartQuiz = function(){ panel.classList.add('open'); startQuiz(); };
-    window.__kikiStartDiag = function(){ panel.classList.add('open'); startDiag(); };
+    window.__kikiStartQuiz = function(){ setPanelOpen(true, false); startQuiz(); };
+    window.__kikiStartDiag = function(){ setPanelOpen(true, false); startDiag(); };
     renderQs();
     var diagGo = document.getElementById('diagGo');
     if (diagGo) diagGo.addEventListener('click', function(){
@@ -1938,8 +1945,11 @@
       window.__kikiStartQuiz();
       panel.scrollIntoView({behavior:'smooth', block:'nearest'});
     });
-    fab.addEventListener('click', function(){ panel.classList.toggle('open'); });
-    close.addEventListener('click', function(){ panel.classList.remove('open'); });
+    fab.addEventListener('click', function(){ setPanelOpen(!panel.classList.contains('open'), false); });
+    close.addEventListener('click', function(){ setPanelOpen(false, true); });
+    document.addEventListener('keydown', function(event){
+      if(event.key==='Escape' && panel.classList.contains('open')) setPanelOpen(false, true);
+    });
   })();
 
 </script>

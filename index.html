@@ -93,7 +93,7 @@
     -webkit-font-smoothing:antialiased;
     font-feature-settings:"palt";
     overflow-x:hidden;
-    padding-top:64px;
+    padding-top:0;
   }
   html[lang="zh-Hant"] body{ font-family:"PingFang TC","Microsoft JhengHei",'Noto Sans JP',sans-serif; }
   img{ max-width:100%; height:auto; display:block; }
@@ -109,7 +109,7 @@
 
   /* ---------- 言語バー(固定) ---------- */
   .lang-bar{
-    position:fixed;
+    position:relative;
     top:0; left:0; right:0;
     z-index:70;
     background:rgba(7,13,31,.95);
@@ -834,6 +834,8 @@
 
   /* ---------- PC(1024px以上) ---------- */
   @media (min-width:1024px){
+    body{ padding-top:64px; }
+    .lang-bar{ position:fixed; }
     .lang-bar-inner{ justify-content:flex-end; padding-right:28px; }
     .hero .wrap{ max-width:980px; }
     .hero-body{
@@ -1562,7 +1564,7 @@
   window.rob6SetLang = setLang; // 検品用フック
 
   function syncBarPad(){
-    document.body.style.paddingTop = barEl.offsetHeight + 'px';
+    document.body.style.paddingTop = window.matchMedia('(min-width: 1024px)').matches ? barEl.offsetHeight + 'px' : '0px';
   }
   window.addEventListener('resize', syncBarPad);
 
@@ -1578,14 +1580,16 @@
   // 追従CTA: ヒーローを過ぎたら表示、最終CTAとフッター付近では隠す
   var sticky = document.getElementById('stickyCta');
   var hero = document.querySelector('.hero');
+  var supportSec = document.getElementById('coupon');
   var finalSec = document.getElementById('order');
   function updateSticky(){
     var heroBottom = hero.getBoundingClientRect().bottom;
     var finalTop = finalSec.getBoundingClientRect().top;
-    var show = heroBottom < 0 && finalTop > window.innerHeight * 0.55;
+    var show = heroBottom < 0 && finalTop > window.innerHeight;
     sticky.classList.toggle('show', show);
     var kikiFab = document.getElementById('kikiFab');
-    if(kikiFab) kikiFab.classList.toggle('show', heroBottom < 0);
+    var supportTop = supportSec.getBoundingClientRect().top;
+    if(kikiFab) kikiFab.classList.toggle('show', heroBottom < 0 && supportTop > window.innerHeight * 0.78);
   }
   window.addEventListener('scroll', updateSticky, { passive:true });
   updateSticky();

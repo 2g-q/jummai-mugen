@@ -26,17 +26,18 @@ h2{font-family:serif;font-size:23px;line-height:1.55;margin:0 0 22px}.choices{di
 <header class="hero"><div class="eyebrow">CARAT SEEK</div><h1>3つの酒どころ診断</h1><p>3つの質問から、今のあなたに近い酒どころをご案内します。</p></header>
 <section class="panel" aria-live="polite">
   <div id="quiz"><div class="progress" aria-label="進み具合"><span></span><span></span><span></span></div><h2 id="question"></h2><div class="choices" id="choices"></div></div>
-  <div id="result" class="result hidden"><div class="tag">あなたに近い酒どころ</div><div class="place" id="place"></div><p id="description"></p><p id="saveStatus" class="save-warning hidden" role="alert"></p><div id="candidates" class="candidates"></div><a class="primary" href="https://line.me/R/ti/p/@881rdcdg">LINEで友だちになって続きを見る</a><button class="secondary" id="restartDiagnosis" type="button">もう一度診断する</button><a class="secondary" href="https://jummai-mugen.com/">ロブ6の販売ページへ戻る</a><p class="note">第一段として、蔵元公式情報で確認した各地域3本をご案内しています。診断結果はこの端末のブラウザ内だけに保存します。LINE友だち追加の5%クーポンは販売開始に合わせてご案内します。</p></div>
+  <div id="result" class="result hidden"><div class="tag">あなたに近い酒どころ</div><div class="place" id="place"></div><p id="description"></p><p id="saveStatus" class="save-warning hidden" role="alert"></p><div id="candidates" class="candidates"></div><a class="primary" href="https://line.me/R/ti/p/@881rdcdg">LINEで友だちになって続きを見る</a><button class="secondary" id="restartDiagnosis" type="button">もう一度診断する</button><a class="secondary" href="https://jummai-mugen.com/">ロブ6の販売ページへ戻る</a><p class="note" id="syncPrivacyNote">第一段として、蔵元公式情報で確認した各地域3本をご案内しています。診断結果はこの端末のブラウザ内だけに保存します。LINE友だち追加の5%クーポンは販売開始に合わせてご案内します。</p></div>
   <div class="search-box" id="searchBox"><h2>日本酒をキーワードで探す</h2><p>銘柄、蔵元、地域、味わいから、登録済みの9本を検索できます。</p><div class="search-row"><input id="sakeSearch" type="search" placeholder="例：辛口、伏見、白鶴" aria-label="日本酒の検索語"><button id="sakeSearchButton" type="button">検索</button></div><div id="searchResults" class="search-results" aria-live="polite"></div></div>
   <div class="route-box"><h2>購入方法</h2><p>オリジナル商品と一般酒では、購入先と配送の仕組みが異なります。</p><div class="route-grid"><article class="route-card"><h3>ロブ6・ロブ6+1</h3><p>4本セットは、11月15日ごろに予約受付を始める予定です。</p><a class="primary" href="https://line.me/R/ti/p/@881rdcdg">LINEで予約開始の案内を受け取る</a></article><article class="route-card"><h3>検索結果に表示される一般酒</h3><p>現在は蔵元公式情報のご案内のみです。仕入れ元の販売条件、在庫、送料、配送方法を確認してから購入機能を接続します。</p><span class="route-state">購入連携は準備中</span></article></div></div>
   <div class="research-box"><h2>データの裏付け</h2><p>酒類総合研究所が公開する、全国新酒鑑評会の分析資料を参照情報として確認しています。</p><a href="https://www.nrib.go.jp/data/kan/shinshu/analysis.html" target="_blank" rel="noopener noreferrer">全国新酒鑑評会 出品酒の分析結果</a><p class="caution">分析値は国税局単位などの集計です。個々の商品を評価する数値としては使用しません。</p></div>
-</section><div class="brand">じゅんまいムゲン</div>
+</section><p class="note" style="text-align:center"><a href="https://jummai.stores.jp/privacy_policy" target="_blank" rel="noopener noreferrer">プライバシーポリシー</a></p><div class="brand">じゅんまいムゲン</div>
 </main>
 <script src="sake-db.js?v=20260905-1"></script>
 <script src="integration-config.js?v=20260912-2"></script>
 <script src="rewards.js?v=20260912-2"></script>
 <script src="liff-sync.js?v=20260912-1"></script>
 <script>
+if(window.CARAT_INTEGRATION_CONFIG?.bridge?.enabled===true){document.getElementById('syncPrivacyNote').textContent='第一段として、蔵元公式情報で確認した各地域3本をご案内しています。LINE内での診断時は、回答・結果・LINEアカウントの識別子を診断結果の保存に利用します。LINE友だち追加の5%クーポンは販売開始に合わせてご案内します。'}
 const questions=[
  {q:'お酒と一緒に召し上がるなら、どのお料理でしょう。',a:[['肉や揚げ物など、味のしっかりしたもの','nada'],['煮物や焼き魚など、出汁の効いたもの','fushimi'],['お刺身や冷奴など、素材の味が立つもの','hiroshima']]},
  {q:'お酒そのものは、どちらがお好みですか。',a:[['飲みごたえのある、力強い味','nada'],['やわらかく、ふくらみのある味','fushimi'],['澄んでいて、すっきりした味','hiroshima']]},

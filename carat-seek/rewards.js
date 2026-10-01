@@ -14,12 +14,12 @@
     }
   }
 
-  function recordDiagnosis(record, config, storage) {
+  function recordDiagnosis(record, config, storage, ownerSubject) {
     if (!record || !record.savedAt || !record.result || !Array.isArray(record.answers)) return { status: 'invalid_diagnosis' };
     const state = readState(storage);
     const id = `diagnosis:${record.savedAt}:${record.result}`;
     if (state.diagnoses.some(item => item.id === id)) return { status: 'duplicate', id };
-    state.diagnoses.push({ id, savedAt: record.savedAt, result: String(record.result), answers: record.answers.map(String), schemaVersion: 1 });
+    state.diagnoses.push({ id, savedAt: record.savedAt, result: String(record.result), answers: record.answers.map(String), schemaVersion: 1, ...(ownerSubject ? { ownerSubject: String(ownerSubject) } : {}) });
     state.sync[id] = { status: 'pending' };
     storage.setItem(STORAGE_KEY, JSON.stringify(state));
     return { status: config && config.bridge && config.bridge.enabled === true ? 'pending' : 'saved_local', id };

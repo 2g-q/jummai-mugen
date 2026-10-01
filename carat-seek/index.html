@@ -92,8 +92,8 @@ function saveDiagnosis(best){
   localStorage.setItem(DIAGNOSIS_STORAGE_KEY,JSON.stringify(record));
   // 診断は端末内へ保存するだけ。5%クーポンは友だち追加時に別処理する。
   if(window.CaratRewards){
-   window.CaratRewards.recordDiagnosis(record,window.CARAT_INTEGRATION_CONFIG,localStorage);
-   if(window.CaratLiffSync)window.CaratLiffSync.syncLatest(window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage);
+   if(window.CaratLiffSync)window.CaratLiffSync.recordCurrent(record,window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage).catch(()=>{});
+   else window.CaratRewards.recordDiagnosis(record,window.CARAT_INTEGRATION_CONFIG,localStorage);
   }
   return true;
  }catch(error){return false}

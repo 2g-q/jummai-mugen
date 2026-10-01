@@ -39,11 +39,36 @@
     if (!liff.isLoggedIn()) return { status: 'login_required' };
     const idToken = liff.getIDToken();
     if (!idToken) return { status: 'token_unavailable' };
+    const subject = liff.getDecodedIDToken && liff.getDecodedIDToken()?.sub;
+    if (!subject) return { status: 'identity_unavailable' };
     const state = rewards.readState(storage);
-    const item = [...state.diagnoses].reverse().find(entry => !state.sync[entry.id] || state.sync[entry.id].status !== 'sent');
+    // Anonymous answers, including pre-LIFF local history, must never be assigned to a later user.
+    const item = [...state.diagnoses].reverse().find(entry => entry.ownerSubject === subject && (!state.sync[entry.id] || state.sync[entry.id].status !== 'sent'));
     if (!item) return { status: 'nothing_to_sync' };
     return rewards.syncDiagnosis(item.id, config, storage, idToken, deps.fetch || fetch);
   }
 
-  return { LIFF_SDK_URL, loadLiffSdk, syncLatest };
+  async function recordCurrent(record, config, rewards, storage, dependencies) {
+    if (!config || !config.bridge || config.bridge.enabled !== true) return rewards.recordDiagnosis(record, config, storage);
+    if (!String(config.liffId || '').trim()) return { status: 'configuration_required' };
+    const deps = dependencies || {};
+    let liff;
+    try {
+      liff = deps.liff || await (deps.loadSdk || loadLiffSdk)(deps.document || document);
+      await liff.init({ liffId: config.liffId });
+    } catch (_) {
+      return { status: 'liff_unavailable' };
+    }
+    if (!liff.isLoggedIn()) return { status: 'login_required' };
+    const idToken = liff.getIDToken();
+    const subject = liff.getDecodedIDToken && liff.getDecodedIDToken()?.sub;
+    if (!idToken || !subject) return { status: 'identity_unavailable' };
+    const saved = rewards.recordDiagnosis(record, config, storage, subject);
+    if (saved.status !== 'pending' && saved.status !== 'duplicate') return saved;
+    const entry = rewards.readState(storage).diagnoses.find(item => item.id === saved.id);
+    if (!entry || entry.ownerSubject !== subject) return { status: 'identity_mismatch' };
+    return rewards.syncDiagnosis(saved.id, config, storage, idToken, deps.fetch || fetch);
+  }
+
+  return { LIFF_SDK_URL, loadLiffSdk, syncLatest, recordCurrent };
 });

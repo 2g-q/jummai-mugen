@@ -56,8 +56,13 @@ const q=document.getElementById('question'),choices=document.getElementById('cho
 function render(){q.textContent=questions[step].q;document.getElementById('quizStep').textContent=`SAKE DISCOVERY / ${step+1} OF 3`;bars.forEach((b,i)=>b.classList.toggle('on',i<=step));choices.replaceChildren(...questions[step].a.map(([label,key])=>{const b=document.createElement('button');b.className='choice';b.textContent=label;b.onclick=()=>answer(key);return b}))}
 function showCandidates(region){
  const root=document.getElementById('candidates');
- const title=document.createElement('h3');title.textContent='この地域から、まず3本';root.replaceChildren(title);
- (window.CARAT_SAKE_DB||[]).filter(item=>item.region===region).slice(0,3).forEach(item=>{
+ const title=document.createElement('h3');title.textContent='味の好みから、見比べたい3本';root.replaceChildren(title);
+ const note=document.createElement('p');note.textContent='地域に限らず、公式情報を確認した9本の味の言葉から選びました。料理・過ごし方だけで銘柄の味は判定していません。';root.append(note);
+ const tasteWords={nada:['濃厚','旨味','旨み','芳醇','ふくよか'],fushimi:['やわらか','まろやか','なめらか','ふくよか'],hiroshima:['すっきり','爽やか','軽やか','透明感','キレ']};
+ const words=tasteWords[selectedAnswers[1]]||[];
+ const matching=item=>words.filter(word=>[item.taste.ja,...(item.tags||[])].join(' ').includes(word));
+ const ranked=[...(window.CARAT_SAKE_DB||[])].sort((a,b)=>matching(b).length-matching(a).length||Number(b.region===region)-Number(a.region===region));
+ ranked.slice(0,3).forEach(item=>{
   const card=document.createElement('article');card.className='sake-card';
   const brewery=document.createElement('div');brewery.className='brewery';brewery.textContent=item.brewery+' · '+item.category;
   const name=document.createElement('h4');name.textContent=item.name;
@@ -66,8 +71,10 @@ function showCandidates(region){
   const price=item.price?'¥'+item.price.amount.toLocaleString()+'（'+(item.price.taxIncluded?'税込':'税別')+'）':'価格は公式ページで確認';
   meta.append(document.createTextNode(item.volumeMl+'ml · '+price+' · '));
   const source=document.createElement('a');source.href=item.sourceUrl;source.target='_blank';source.rel='noopener noreferrer';source.textContent='蔵元公式';meta.append(source);
-  card.append(brewery,name,taste,meta);root.append(card);
+  const reason=document.createElement('p');reason.className='selection-reason';reason.textContent=matching(item).length?'選んだ理由：お好みに近い「'+matching(item).join('・')+'」という言葉があります。':'飲み比べ候補：味の説明を読んで、お好みと比べてみてください。';
+  card.append(brewery,name,taste,reason,meta);root.append(card);
  });
+ const next=document.createElement('a');next.className='secondary';next.href='./zenshu/index.html'+({nada:'?wish=0,0,4,0',fushimi:'',hiroshima:'?wish=0,0,0,4'}[selectedAnswers[1]]||'');next.textContent=selectedAnswers[1]==='fushimi'?'全酒でも、味の言葉を見比べる':'もっと探す：この飲み口に近い全酒の候補へ';root.append(next);
 }
 function makeSakeCard(item){
  const card=document.createElement('article');card.className='sake-card';
@@ -101,7 +108,7 @@ function saveDiagnosis(best){
   return true;
  }catch(error){return false}
 }
-function answer(key){selectedAnswers.push(key);scores[key]++;step++;if(step<questions.length)return render();const best=Object.keys(scores).sort((a,b)=>scores[b]-scores[a])[0];const saved=saveDiagnosis(best);const saveStatus=document.getElementById('saveStatus');saveStatus.classList.toggle('hidden',saved);saveStatus.textContent=saved?'':'診断結果をこの端末へ保存できませんでした。結果は表示できますが、再読み込み後には残りません。ブラウザの保存設定をご確認ください。';document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('place').textContent=results[best][0];document.getElementById('description').textContent=results[best][1];showCandidates(best)}
+function answer(key){selectedAnswers.push(key);scores[key]++;step++;if(step<questions.length)return render();const leaders=Object.keys(scores).filter(k=>scores[k]===Math.max(...Object.values(scores)));const best=leaders.includes(selectedAnswers[1])?selectedAnswers[1]:leaders[0];const saved=saveDiagnosis(best);const saveStatus=document.getElementById('saveStatus');saveStatus.classList.toggle('hidden',saved);saveStatus.textContent=saved?'':'診断結果をこの端末へ保存できませんでした。結果は表示できますが、再読み込み後には残りません。ブラウザの保存設定をご確認ください。';document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('place').textContent=results[best][0];document.getElementById('description').textContent=(leaders.length>1?'今回は3地域が同点。味の回答を優先して、散策の入口をご案内します。':'3問の回答から選ぶ、酒どころ巡りの入口です。')+' 地域内でも銘柄ごとに味は異なります。';showCandidates(best)}
 render();
 // 前回の同期が未完了なら、次回表示時にも安全に再試行する。sent済みは再送しない。
 if(window.CaratLiffSync&&window.CaratRewards)window.CaratLiffSync.syncLatest(window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage);

@@ -19,7 +19,8 @@
     const state = readState(storage);
     const id = `diagnosis:${record.savedAt}:${record.result}`;
     if (state.diagnoses.some(item => item.id === id)) return { status: 'duplicate', id };
-    state.diagnoses.push({ id, savedAt: record.savedAt, result: String(record.result), answers: record.answers.map(String), schemaVersion: 1, ...(ownerSubject ? { ownerSubject: String(ownerSubject) } : {}) });
+    if (![1, 2].includes(record.version ?? 1)) return { status: 'invalid_diagnosis' };
+    state.diagnoses.push({ id, savedAt: record.savedAt, result: String(record.result), answers: record.answers.map(String), schemaVersion: record.version ?? 1, ...(ownerSubject ? { ownerSubject: String(ownerSubject) } : {}) });
     state.sync[id] = { status: 'pending' };
     storage.setItem(STORAGE_KEY, JSON.stringify(state));
     return { status: config && config.bridge && config.bridge.enabled === true ? 'pending' : 'saved_local', id };

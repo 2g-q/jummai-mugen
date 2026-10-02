@@ -36,7 +36,7 @@ h2{font-family:serif;font-size:23px;line-height:1.55;margin:0 0 22px}.choices{di
 </main>
 <script src="sake-db.js?v=20260905-1"></script>
 <script src="integration-config.js?v=20260912-2"></script>
-<script src="rewards.js?v=20260912-2"></script>
+<script src="rewards.js?v=20261003-2"></script>
 <script src="liff-sync.js?v=20260912-1"></script>
 <script>
 if(window.CARAT_INTEGRATION_CONFIG?.bridge?.enabled===true){document.getElementById('syncPrivacyNote').textContent='第一段として、蔵元公式情報で確認した各地域3本をご案内しています。LINE内での診断時は、回答・結果・LINEアカウントの識別子を診断結果の保存に利用します。LINE友だち追加の5%クーポンは販売開始に合わせてご案内します。'}
@@ -97,7 +97,7 @@ function searchSake(){
  hits.forEach(item=>root.append(makeSakeCard(item)));
 }
 function saveDiagnosis(best){
- const record={version:1,answers:selectedAnswers.slice(),scores:{...scores},result:best,savedAt:new Date().toISOString()};
+ const record={version:2,answers:selectedAnswers.slice(),scores:{...scores},result:best,savedAt:new Date().toISOString()};
  try{
   localStorage.setItem(DIAGNOSIS_STORAGE_KEY,JSON.stringify(record));
   // 診断は端末内へ保存するだけ。5%クーポンは友だち追加時に別処理する。

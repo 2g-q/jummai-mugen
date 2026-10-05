@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>じゅんまいムゲン｜KOMOJU審査用・購入導線</title>
+<style>
+:root{--ink:#172838;--muted:#526577;--gold:#967136;--line:#d9e1e5;--paper:#f4f6f7}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:20px}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.85 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}header{background:var(--ink);color:white;padding:26px 24px}header div,main{width:min(840px,100%);margin:auto}header small{color:#e4d0aa;letter-spacing:.1em}header strong{display:block;font-size:28px}main{padding:24px 16px 60px}h1{font-size:clamp(26px,5vw,36px);line-height:1.5}h2{font-size:25px;line-height:1.5;margin:0 0 20px}h3{font-size:20px;margin:22px 0 8px}p{margin:12px 0}a{color:#145889;text-underline-offset:4px;overflow-wrap:anywhere}nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}nav a{background:white;padding:9px 14px;border:1px solid var(--line);border-radius:8px;font-weight:600}section{margin:20px 0;background:white;padding:28px;border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 22px #17283808}section:target{border-color:var(--gold)}.notice{border-left:5px solid var(--gold);background:#fff6e5;padding:16px 18px;font-size:16px}.tag{display:block;color:var(--gold);font-size:14px;font-weight:750;letter-spacing:.08em;margin-bottom:8px}.price{font-size:34px;font-weight:750;margin:12px 0}.price small{font-size:16px;font-weight:500}dl{display:grid;grid-template-columns:160px 1fr;gap:14px 18px}dt{font-weight:700}dd{margin:0;overflow-wrap:anywhere}.total{border-block:1px solid var(--line);padding:14px 0;font-size:21px;font-weight:700;display:flex;justify-content:space-between;gap:12px}.button,button{display:inline-block;border:0;border-radius:9px;padding:14px 20px;background:var(--ink);color:white;font:700 17px/1.5 inherit;cursor:pointer;text-decoration:none;min-height:52px}button:disabled{background:#65717b;cursor:not-allowed}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #dfaa50;outline-offset:4px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}.muted{color:var(--muted);font-size:16px}.sample{background:#f1f5f8;padding:16px;border-radius:8px}.success{background:#eef7f0;border-left:5px solid #428454;padding:18px}label{display:flex;align-items:flex-start;gap:12px;margin:20px 0;font-weight:600}input[type=checkbox]{width:24px;height:24px;flex:none;margin-top:5px}table{width:100%;border-collapse:collapse;font-size:16px}th,td{padding:12px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}footer{padding:22px 0;text-align:center;font-size:15px}ul,ol{padding-left:25px}.status{padding:10px 0;font-weight:700;color:#6d4d13}#complete[hidden]{display:none}@media(max-width:520px){section{padding:22px 18px}dl{grid-template-columns:1fr;gap:4px}dd{margin-bottom:15px}header strong{font-size:24px}.total{font-size:19px}th:first-child{width:35%}}@media print{body{background:white;font-size:13px}header{color:var(--ink);background:white;border-bottom:2px solid var(--ink)}header small{color:var(--gold)}main{padding:12px 0;max-width:none}section{break-inside:avoid;box-shadow:none;border-radius:0;margin:14px 0;padding:18px}nav,.actions{display:none}#complete[hidden]{display:block}.tag{font-size:12px}h2{font-size:21px}.price{font-size:28px}a{color:var(--ink)}@page{size:A4;margin:14mm}}
+.button,button{font:inherit;font-weight:700}@media(max-width:520px){.total{flex-direction:column}.total span:last-child{text-align:right}}
+</style>
+</head>
+<body>
+<header>
+<div>
+<small>ROYAL GREEN FOODS</small>
+<strong>じゅんまいムゲン</strong>
+</div>
+</header>
+<main>
+<h1>KOMOJU審査用<br>購入導線・販売条件</h1>
+<div class="notice">
+<strong>開発中の画面・動作見本です。注文・決済は発生しません。</strong>
+<br>2026年10月5日版。入力例は架空のものです。個人情報やカード情報の入力・送信・保存は行いません。KOMOJUの画面例は当方の説明用図示であり、KOMOJUが提供する実画面ではありません。</div>
+<nav aria-label="確認する画面">
+<a href="#product">1 商品</a>
+<a href="#delivery">2 お届け先</a>
+<a href="#confirm">3 注文確認</a>
+<a href="#payment">4 決済</a>
+<a href="#complete">5 完了例</a>
+<a href="#legal">販売条件</a>
+<a href="#contact">お問い合わせ</a>
+</nav>
+<section id="product">
+<span class="tag">01 / 商品・カート</span>
+<h2>ロブ6・ロブ6+1<br>飲み比べ4本セット</h2>
+<p>ロブ6 × 2本、ロブ6+1 × 2本。各720ml、合計4本のセットです。</p>
+<p class="price">22,000円 <small>税込・送料無料</small>
+</p>
+<dl>
+<dt>購入数量</dt>
+<dd>1セット（4本）</dd>
+<dt>販売予定枠</dt>
+<dd>先着10名様。支払い確認順で確定し、満枠になった場合は受付を終了します。</dd>
+<dt>配送範囲</dt>
+<dd>日本国内のみ。海外への発送は行いません。</dd>
+<dt>予約開始予定</dt>
+<dd>2026年11月15日ごろ。受付開始日時の確定前は注文を受け付けません。</dd>
+<dt>お届け予定</dt>
+<dd>2026年11月中。受注状況により前後する場合があります。</dd>
+</dl>
+<div class="total">
+<span>商品22,000円 ＋ 送料0円</span>
+<span>計22,000円</span>
+</div>
+<div class="actions">
+<a class="button" href="#delivery">お届け先の画面例へ</a>
+<a href="../">商品紹介ページへ</a>
+</div>
+<p class="muted">本資料は上記4本セット専用です。一般酒の価格・地域別送料とは区別しています。</p>
+</section>
+<section id="delivery">
+<span class="tag">02 / お届け先・年齢確認</span>
+<h2>お届け先の確認</h2>
+<p class="muted">以下は入力後の表示見本です。実際の個人情報は入力しないでください。</p>
+<div class="sample">
+<dl>
+<dt>お名前</dt>
+<dd>日本 太郎（架空の入力例）</dd>
+<dt>郵便番号</dt>
+<dd>100-0001（入力例）</dd>
+<dt>住所</dt>
+<dd>東京都千代田区千代田1番地（架空の入力例）</dd>
+<dt>電話番号</dt>
+<dd>購入者の連絡先を入力する欄（本見本では入力不可）</dd>
+<dt>メール</dt>
+<dd>sample@example.com（架空の入力例）</dd>
+</dl>
+</div>
+<label>
+<input id="age" type="checkbox">20歳以上です（審査用の操作確認）</label>
+<p>20歳未満の方への酒類の販売は行いません。</p>
+<button id="next" type="button" disabled>注文確認の画面例へ</button>
+<p id="age-status" class="status" role="status">20歳以上の確認を選択すると次へ進めます。</p>
+</section>
+<section id="confirm">
+<span class="tag">03 / 最終確認</span>
+<h2>ご注文内容の確認</h2>
+<dl>
+<dt>商品・数量</dt>
+<dd>ロブ6・ロブ6+1 720ml × 4本 / 1セット</dd>
+<dt>商品代金</dt>
+<dd>22,000円（税込）</dd>
+<dt>送料・追加料金</dt>
+<dd>0円。今回のセットの合計は22,000円です。</dd>
+<dt>発送先</dt>
+<dd>日本国内（上記は架空の入力例）</dd>
+<dt>お届け</dt>
+<dd>2026年11月中予定</dd>
+<dt>支払い時期</dt>
+<dd>決済時。支払いの確認後に予約枠を確定します。</dd>
+<dt>返品</dt>
+<dd>商品に欠陥がある場合を除き、返品には応じません。詳しくは下記販売条件をご覧ください。</dd>
+<dt>キャンセル・返金</dt>
+<dd>決済後でも発送準備開始前までは全額返金できます。発送準備開始後は原則キャンセル・返金不可。不良品・誤配送等は別途対応します。</dd>
+</dl>
+<div class="total">
+<span>合計（税込）</span>
+<span>22,000円</span>
+</div>
+<label>
+<input id="terms" type="checkbox">販売条件・個人情報の取扱いを確認しました（審査用）</label>
+<button id="payment-next" type="button" disabled>決済画面の説明を見る（課金なし）</button>
+<p class="muted">本番では、商品・数量・合計額・配送・返品条件をここで確認し、必要なら前の画面で修正できる設計です。注文確定・枠数管理・通知の実接続は別途テストします。</p>
+</section>
+<section id="payment">
+<span class="tag">04 / KOMOJUへ遷移する設計</span>
+<h2>お支払い画面</h2>
+<div class="sample">
+<strong>KOMOJU Hosted Pageへの引き渡し予定</strong>
+<p>商品：飲み比べ4本セット<br>お支払い金額：22,000円（税込）<br>決済方法：加盟店審査・利用申請で承認された方法のみを表示</p>
+</div>
+<p>カード番号やセキュリティコードは当サイトで扱わず、KOMOJUが提供する決済画面で入力する設計です。</p>
+<p class="muted">このページは説明用です。KOMOJUの実テストURL、決済成功・取消・期限切れ、結果通知、先着枠の排他制御・二重確定防止は未検証です。Amazon Pay・楽天ペイ等の利用可否は各審査結果に従います。</p>
+<div class="actions">
+<button id="demo-complete" type="button">決済完了後の画面例を見る（課金なし）</button>
+<a href="#confirm">注文内容の画面例へ戻る</a>
+</div>
+</section>
+<section id="complete" hidden>
+<span class="tag">05 / 決済完了後の表示例</span>
+<h2>購入完了画面の見本</h2>
+<div class="success">
+<strong>これは画面例です。ご注文・支払いは完了していません。</strong>
+</div>
+<dl>
+<dt>注文番号の例</dt>
+<dd>DEMO-ROB6-0001（架空）</dd>
+<dt>商品・金額の例</dt>
+<dd>飲み比べ4本セット / 22,000円（税込）</dd>
+<dt>お届け予定</dt>
+<dd>2026年11月中</dd>
+</dl>
+<p class="muted">本番では決済結果の通知を検証してから注文を確定し、注文内容を案内する予定です。戻り先画面へのアクセスだけでは支払い済みにしません。未払い・取消の場合は予約を確定せず、再試行の案内を表示する設計です。</p>
+<div class="actions">
+<a href="#product">商品画面の見本へ戻る</a>
+<a href="#contact">お問い合わせを見る</a>
+</div>
+</section>
+<section id="legal">
+<span class="tag">販売条件 / 今回の4本セット専用</span>
+<h2>特定商取引法に基づく表記</h2>
+<dl>
+<dt>販売業者</dt>
+<dd>ロイヤルグリーンフーズ</dd>
+<dt>運営責任者</dt>
+<dd>滝澤 信夫</dd>
+<dt>所在地</dt>
+<dd>〒257-0028 神奈川県秦野市東田原200-34</dd>
+<dt>電話番号</dt>
+<dd>
+<a href="tel:0463450846">0463-45-0846</a>（平日9:00〜18:00）</dd>
+<dt>問い合わせ</dt>
+<dd>下記の電話・公式LINE・STORES問い合わせ窓口で承ります。</dd>
+<dt>販売価格</dt>
+<dd>飲み比べ4本セット22,000円（税込）</dd>
+<dt>代金以外の料金</dt>
+<dd>今回のセットは送料無料、合計22,000円。通信料金は利用者負担です。</dd>
+<dt>支払方法</dt>
+<dd>KOMOJUで承認された決済方法を、本番開始時に明示します。現在は購入・決済を受け付けていません。</dd>
+<dt>支払時期</dt>
+<dd>決済時。支払い確認後に予約枠を確定します。</dd>
+<dt>引渡時期</dt>
+<dd>受注生産のため2026年11月中のお届け予定。受注状況により前後する場合があります。</dd>
+<dt>販売数量</dt>
+<dd>先着10名様。支払い確認順、満枠時は受付終了。キャンセル待ちは設けません。</dd>
+<dt>返品・交換</dt>
+<dd>商品に欠陥がある場合を除き、返品には応じません。不良品・誤配送の場合は販売者へお問い合わせください。</dd>
+<dt>キャンセル・返金</dt>
+<dd>決済後でも発送準備開始前までは全額返金できます。発送準備開始後は原則キャンセル・返金不可とし、不良品・誤配送等の販売者責任は別途対応します。発送準備状況・返金処理の実接続は本番開始前に検証します。</dd>
+<dt>配送地域</dt>
+<dd>日本国内限定。海外発送は行いません。</dd>
+<dt>酒類販売管理者</dt>
+<dd>販売場所在地：神奈川県秦野市東田原200-34<br>氏名：滝澤 信夫<br>研修受講日：2026年1月16日（番号2600106e）<br>次回受講期限：2029年1月15日<br>研修実施団体：全国小売酒販組合中央会</dd>
+<dt>酒類販売免許</dt>
+<dd>平法0139号（平塚税務署、2023年5月25日）<br>自己商標酒類卸売業免許：平法第132号（平塚税務署、2026年6月23日）<br>本記載は受領資料に基づきます。免許証の写し・通信販売の適用範囲は審査時に販売者から確認資料を提出します。</dd>
+<dt>年齢制限</dt>
+<dd>20歳未満の方への酒類の販売は行いません。</dd>
+</dl>
+<p class="muted">本ページは審査用の販売条件です。本番開始前に、承認された支払方法・受付開始日時を確定し、上記のキャンセル・返金条件とともに実際の販売画面へ反映します。STORESの一般商品とは別条件です。</p>
+</section>
+<section id="privacy">
+<h2>個人情報の取扱い</h2>
+<p>現在の審査用ページは、購入者情報・カード情報を入力・送信・保存しません。架空の表示例のみを使用します。</p>
+<p>本番では配送・注文連絡・本人の年齢確認に必要な情報を取り扱う予定です。KOMOJUへの情報送信、配送事業者への委託、保存期間・問い合わせ対応を含む方針を実装と整合させてから受付を開始します。</p>
+<a href="https://jummai.stores.jp/privacy_policy" target="_blank" rel="noopener">既存STORESのプライバシーポリシー</a>
+<p class="muted">上記リンクはSTORES店舗の方針です。今回の独立した決済導線の方針を自動で代替するものではありません。</p>
+</section>
+<section id="contact">
+<h2>お問い合わせ窓口</h2>
+<p>商品・お届け・返品については、販売者のロイヤルグリーンフーズが対応します。</p>
+<dl>
+<dt>電話</dt>
+<dd>
+<a href="tel:0463450846">0463-45-0846</a>（平日9:00〜18:00）</dd>
+<dt>公式LINE</dt>
+<dd>
+<a href="https://line.me/R/ti/p/@881rdcdg" target="_blank" rel="noopener">じゅんまいムゲン（@881rdcdg）</a>
+</dd>
+<dt>問い合わせフォーム</dt>
+<dd>
+<a href="https://jummai.stores.jp/inquiry" target="_blank" rel="noopener">STORESのお問い合わせ窓口</a>
+</dd>
+</dl>
+<p class="muted">外部フォームはSTORES上の窓口です。本資料から問い合わせを自動送信しません。電話窓口も併記しています。</p>
+</section>
+<section id="reviewer">
+<h2>審査ご担当者様への補足</h2>
+<p>導入予定先：公式LINE → <a href="https://jummai-mugen.com/">商品紹介ページ</a> → 商品・お届け先・最終確認 → KOMOJUの決済画面 → 決済結果確認・注文案内。</p>
+<p>現在は開発段階で、商品紹介ページと本資料は閲覧できます。実テスト接続、本番注文受付・課金は開始していません。実決済の動作確認と、本資料による画面構成の確認を分けてご覧ください。</p>
+</section>
+<footer>
+<a href="#legal">特定商取引法に基づく表記</a> / <a href="#privacy">個人情報の取扱い</a> / <a href="#contact">お問い合わせ</a>
+<p>© ロイヤルグリーンフーズ</p>
+</footer>
+</main>
+<script>
+(()=>{const age=document.getElementById('age'),next=document.getElementById('next'),terms=document.getElementById('terms'),pay=document.getElementById('payment-next');age.addEventListener('change',()=>{next.disabled=!age.checked;document.getElementById('age-status').textContent=age.checked?'年齢確認の操作を確認しました。注文・課金は発生しません。':'20歳以上の確認を選択すると次へ進めます。'});next.addEventListener('click',()=>{if(age.checked)location.hash='confirm'});terms.addEventListener('change',()=>pay.disabled=!terms.checked);pay.addEventListener('click',()=>{if(terms.checked)location.hash='payment'});const show=()=>{document.getElementById('complete').hidden=false};document.getElementById('demo-complete').addEventListener('click',()=>{show();location.hash='complete'});window.addEventListener('hashchange',()=>{if(location.hash==='#complete')show()});if(location.hash==='#complete')show()})();
+</script>
+</body>
+</html>

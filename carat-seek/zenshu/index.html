@@ -48,8 +48,8 @@ function diagnosisEvidence(x,answers){
  const occasion=Number.isFinite(capacity)&&capacity>0?(answers[2]==='fushimi'?Number(capacity>720):Number(capacity<=720)):0;
  return {taste,food,occasion};
 }
-function rankDiagnosisCatalog(products,answers){
- const eligible=products.filter(x=>x.eligibility_status==='eligible');
+function rankDiagnosisCatalog(products,answers,includeReview=false){
+ const eligible=products.filter(x=>x.eligibility_status==='eligible'||(includeReview&&x.eligibility_status==='review_required'));
  if(!validDiagnosisAnswers(answers))return eligible;
  const evidence=new Map(eligible.map(x=>[x.product_code,diagnosisEvidence(x,answers)]));
  return eligible.sort((a,b)=>{
@@ -72,7 +72,7 @@ function profile(x){return (x.taste_keywords||[]).length?(x.taste_keywords||[]).
 function foodText(x){const p=pairing(x);return p?p.food:'味わい情報を確認してから選びましょう。'}
 function notify(text){$('message').textContent=text;clearTimeout(messageTimer);messageTimer=setTimeout(()=>$('message').textContent='',3500)}
 const storageKey='carat-zenshu-candidates-v1';
-try{const saved=JSON.parse(localStorage.getItem(storageKey)||'[]');if(Array.isArray(saved))saved.filter(code=>byCode.has(code)).slice(0,5).forEach(code=>selected.add(code))}catch(e){}
+try{const saved=JSON.parse(localStorage.getItem(storageKey)||'[]');if(Array.isArray(saved))[...new Set(saved.filter(code=>byCode.has(code)))].slice(0,5).forEach(code=>selected.add(code))}catch(e){}
 function save(){try{localStorage.setItem(storageKey,JSON.stringify([...selected]))}catch(e){notify('このブラウザには候補を保存できません。画面を閉じる前にコピーしてください。')}}
 // NOT is a separate plain-language field; it never changes the meaning of AND/OR.
 const exclude=document.createElement('input');exclude.id='exclude';exclude.type='search';exclude.placeholder='例：にごり 生酒';exclude.autocomplete='off';
@@ -88,13 +88,13 @@ function searchText(value){return normalize(value).replace(/[ァ-ヶ]/g,c=>Strin
 function searchWords(value){return searchText(value).trim().split(/\s+/).filter(Boolean)}
 function searchableProduct(x){return searchText([x.name,x.product_code,...x.subcategories,...(x.taste_keywords||[]),...(x.tags||[]),x.product_facts?.origin||''].join(' '))}
 function queryMatches(hay,tokens,omissions){return (!tokens.length||(mode.value==='and'?tokens.every(t=>hay.includes(t)):tokens.some(t=>hay.includes(t))))&&!omissions.some(t=>hay.includes(t))}
-function readURL(){const params=new URLSearchParams(location.search);for(const [key,el] of Object.entries(controls)){const v=params.get(key);if(v!==null&&(el.tagName==='INPUT'||[...el.options].some(o=>o.value===v)))el.value=v}if(meals[params.get('meal')])meal=params.get('meal')}
+function readURL(){const params=new URLSearchParams(location.search);for(const [key,el] of Object.entries(controls)){const v=params.get(key);if(v!==null&&(el.tagName==='INPUT'||[...el.options].some(o=>o.value===v)))el.value=v}if(Object.hasOwn(meals,params.get('meal')))meal=params.get('meal')}
 function writeURL(){const params=new URLSearchParams();for(const [key,el] of Object.entries(controls)){const defaultValue={mode:'and',review:'eligible',sort:'source'}[key]||'';if(el.value!==defaultValue)params.set(key,el.value)}if(meal)params.set('meal',meal);if(detailProduct)params.set('product',detailProduct);if(validDiagnosisAnswers(diagnosisAnswers))params.set('diagnosis',diagnosisAnswers.join(','));saveExplorerParams(params);try{history.replaceState(null,'',location.pathname+(params.size?'?'+params:'')+location.hash)}catch(e){}}
 function updateTray(){ $('tray-count').textContent=`候補 ${selected.size} / 5本`;$('compare').disabled=!selected.size;$('copy').disabled=!selected.size;$('clear').disabled=!selected.size;document.querySelectorAll('.pick').forEach(b=>{const picked=selected.has(b.dataset.code);b.classList.toggle('selected',picked);b.setAttribute('aria-pressed',String(picked));b.disabled=!picked&&selected.size>=maxSelection;b.textContent=picked?'候補から外す':'＋ 候補に入れる'})}
 function toggle(code){if(selected.has(code))selected.delete(code);else if(selected.size<maxSelection)selected.add(code);save();updateTray()}
 function imageTag(x,loading='lazy'){const url=safeURL(x.image_url,true);return url?`<img loading="${loading}" src="${esc(url)}" alt="${esc(x.name)}">`:'<span>商品画像なし</span>'}
 function card(x){return `<article class="sake"><button class="image-button" type="button" data-detail="${esc(x.product_code)}" aria-label="${esc(x.name)}の詳細">${imageTag(x)}</button><div class="body"><div class="category">${esc(x.subcategories.slice(0,2).join(' / '))}</div><h3>${esc(x.name)}</h3><div class="meta">${x.capacity_ml?esc(x.capacity_ml)+'ml':'容量確認中'} · ${x.eligibility_status==='review_required'?'分類確認中':(x.available?'取得時点で在庫表示あり':'取得時点で在庫なし')}</div><div class="tags">${(x.taste_keywords||[]).length?x.taste_keywords.map(t=>`<span class="tag">${esc(t)}</span>`).join(''):'<span class="meta">味わい情報は商品ページへ</span>'}</div><div class="food-caption">${pairing(x)?'料理のヒント：'+esc(pairing(x).label):'商品情報から、じっくり選ぶ。'}</div><div class="card-actions"><button class="detail-button" type="button" data-detail="${esc(x.product_code)}">味と料理を見る</button><button class="pick" data-code="${esc(x.product_code)}" type="button"></button></div></div></article>`}
-function render(resetPage=true){if(resetPage)shownLimit=pageSize;const tokens=searchWords(q.value),omissions=searchWords(exclude.value);filtered=rows.filter(x=>{const hay=searchableProduct(x);return fitsExplorer(x)&&(review.value==='all'||x.eligibility_status===review.value)&&(!kind.value||x.subcategories.includes(kind.value))&&(!taste.value||x.taste_keywords.includes(taste.value))&&(!meal||matchesMeal(x,meal))&&(!capacity.value||(Number(x.capacity_ml)>0&&(capacity.value==='small'?x.capacity_ml<=720:x.capacity_ml>720)))&&queryMatches(hay,tokens,omissions)});if(validDiagnosisAnswers(diagnosisAnswers)&&sort.value==='source')filtered=rankDiagnosisCatalog(filtered,diagnosisAnswers);if(explorerActive&&sort.value==='source')filtered.sort((a,b)=>preferenceScore(b)-preferenceScore(a));if(sort.value==='name')filtered.sort((a,b)=>a.name.localeCompare(b.name,'ja'));if(sort.value==='capacity')filtered.sort((a,b)=>(a.capacity_ml||Infinity)-(b.capacity_ml||Infinity));summary.textContent=`${filtered.length}件 ／ ${Math.min(filtered.length,shownLimit)}件を表示`;summary.dataset.total=filtered.length;list.innerHTML=filtered.slice(0,shownLimit).map(card).join('')||'<div class="empty"><h3>条件に合う一本が見つかりませんでした</h3><p>選んだ条件を一つずつ外すか、短い言葉で探してみてください。</p><button type="button" data-relax>味・料理などの絞り込みを外す</button><button type="button" data-reset>条件をリセット</button></div>';$('more').hidden=shownLimit>=filtered.length;document.querySelectorAll('[data-taste]').forEach(b=>b.setAttribute('aria-pressed',String(taste.value===b.dataset.taste)));document.querySelectorAll('[data-meal]').forEach(b=>b.setAttribute('aria-pressed',String(meal===b.dataset.meal)));updateTray();updateExplorer();writeURL()}
+function render(resetPage=true){if(resetPage)shownLimit=pageSize;const tokens=searchWords(q.value),omissions=searchWords(exclude.value);filtered=rows.filter(x=>{const hay=searchableProduct(x);return fitsExplorer(x)&&(review.value==='all'||x.eligibility_status===review.value)&&(!kind.value||x.subcategories.includes(kind.value))&&(!taste.value||x.taste_keywords.includes(taste.value))&&(!meal||matchesMeal(x,meal))&&(!capacity.value||(Number(x.capacity_ml)>0&&(capacity.value==='small'?x.capacity_ml<=720:x.capacity_ml>720)))&&queryMatches(hay,tokens,omissions)});if(validDiagnosisAnswers(diagnosisAnswers)&&sort.value==='source')filtered=rankDiagnosisCatalog(filtered,diagnosisAnswers,true);if(explorerActive&&sort.value==='source')filtered.sort((a,b)=>preferenceScore(b)-preferenceScore(a));if(sort.value==='name')filtered.sort((a,b)=>a.name.localeCompare(b.name,'ja'));if(sort.value==='capacity')filtered.sort((a,b)=>(a.capacity_ml||Infinity)-(b.capacity_ml||Infinity));summary.textContent=`${filtered.length}件 ／ ${Math.min(filtered.length,shownLimit)}件を表示`;summary.dataset.total=filtered.length;list.innerHTML=filtered.slice(0,shownLimit).map(card).join('')||'<div class="empty"><h3>条件に合う一本が見つかりませんでした</h3><p>選んだ条件を一つずつ外すか、短い言葉で探してみてください。</p><button type="button" data-relax>味・料理などの絞り込みを外す</button><button type="button" data-reset>条件をリセット</button></div>';$('more').hidden=shownLimit>=filtered.length;document.querySelectorAll('[data-taste]').forEach(b=>b.setAttribute('aria-pressed',String(taste.value===b.dataset.taste)));document.querySelectorAll('[data-meal]').forEach(b=>b.setAttribute('aria-pressed',String(meal===b.dataset.meal)));updateTray();updateExplorer();writeURL()}
 function reset(){diagnosisAnswers=[];q.value='';exclude.value='';kind.value='';taste.value='';capacity.value='';review.value='eligible';mode.value='and';sort.value='source';meal='';resetExplorer();render()}
 function sourceLink(x){const url=safeURL(x.source_url);return url?`<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">全酒の商品情報を見る ↗</a>`:''}
 function showDetail(x,trigger){const p=pairing(x);$('dialog-content').innerHTML=`<div class="detail-layout"><div class="detail-image">${imageTag(x,'eager')}</div><div><div class="eyebrow">SAKE PROFILE / ${esc(x.product_code)}</div><h2 id="dialog-title">${esc(x.name)}</h2><div class="meta">${esc(x.subcategories.join(' / '))} · ${x.capacity_ml?esc(x.capacity_ml)+'ml':'容量確認中'}</div><h3>味わいの手がかり</h3><div class="taste-words">${x.taste_keywords.map(t=>`<span>${esc(t)}</span>`).join('')}</div><p>${esc(profile(x))}</p><div class="pairing"><h3>今夜のつまみのヒント</h3><p>${esc(foodText(x))}</p>${p?`<p>${esc(p.why)}</p>`:''}<small>公開情報の言葉から考えた一般的な合わせ方です。個別商品の試飲評価ではありません。</small></div><p class="meta">価格・在庫・購入可否は販売先でご確認ください。</p>${sourceLink(x)}<button class="pick" data-code="${esc(x.product_code)}" type="button"></button></div></div>`;openDialog(trigger);updateTray()}
@@ -196,16 +196,17 @@ dialog.querySelector('.dialog-close').addEventListener('click',clearDetailLink);
 // Keep existing filters, shared URLs and candidate storage; simplify only their presentation.
 const activeLabels={q:'検索',exclude:'除外',kind:'種類',taste:'味',capacity:'容量',mode:'一致',review:'対象',sort:'並び順'};
 function renderActiveConditions(){
- sort.options[0].textContent=validDiagnosisAnswers(diagnosisAnswers)?'診断に近い順':'掲載順';
+ sort.options[0].textContent=explorerActive?'設定した好みに近い順':(validDiagnosisAnswers(diagnosisAnswers)?'診断に近い順':'掲載順');
  const terms=q.value.trim().split(/\s+/).filter(Boolean),excluded=exclude.value.trim().split(/\s+/).filter(Boolean);
  const rules=[];
  if(terms.length)rules.push('「'+terms.join(mode.value==='and'?'」と「':'」または「')+'」を含む');
  if(excluded.length)rules.push('「'+excluded.join('」「')+'」は除く');
  if(taste.value||kind.value||capacity.value||meal||mapChoice||explorerActive)rules.push('選んだ味・料理などの条件にも一致');
- if(validDiagnosisAnswers(diagnosisAnswers))rules.unshift('3問の回答をもとに、味の言葉・料理のヒント・容量で候補を並べる');
+ if(sort.value==='source'&&explorerActive)rules.unshift('設定した好みに合う味の言葉を優先して並べる');
+ else if(sort.value==='source'&&validDiagnosisAnswers(diagnosisAnswers))rules.unshift('3問の回答をもとに、味の言葉・料理のヒント・容量で候補を並べる');
  $('search-rule').textContent=rules.length?'探し方：'+rules.join(' ／ '):'銘柄・産地・味の言葉を検索できます。ひらがな・カタカナ、全角・半角を区別せず探します。';
  const chips=[];
- if(validDiagnosisAnswers(diagnosisAnswers))chips.push('<button type="button" data-condition="diagnosis">3問の回答に近い順 ×</button>');
+ if(validDiagnosisAnswers(diagnosisAnswers))chips.push('<button type="button" data-condition="diagnosis">3問の回答'+(sort.value==='source'&&!explorerActive?'に近い順':'を保持')+' ×</button>');
  for(const [key,el] of Object.entries(controls)){
   const fallback={mode:'and',review:'eligible',sort:'source'}[key]||'';
   if(el.value===fallback)continue;
@@ -232,7 +233,7 @@ readURL();
 if(validDiagnosisAnswers(diagnosisAnswers))sort.options[0].textContent='診断に近い順';
 if(mapChoice||explorerActive)$('taste-tools').open=true;
 render();
-if(requestedProduct&&byCode.get(requestedProduct)?.eligibility_status==='eligible'){
+if(requestedProduct&&byCode.has(requestedProduct)){
  const trigger=[...list.querySelectorAll('[data-detail]')].find(b=>b.dataset.detail===requestedProduct)||q;
  showDetail(byCode.get(requestedProduct),trigger);
 }

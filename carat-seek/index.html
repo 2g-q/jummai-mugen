@@ -55,8 +55,8 @@ function diagnosisEvidence(x,answers){
  const occasion=Number.isFinite(capacity)&&capacity>0?(answers[2]==='fushimi'?Number(capacity>720):Number(capacity<=720)):0;
  return {taste,food,occasion};
 }
-function rankDiagnosisCatalog(products,answers){
- const eligible=products.filter(x=>x.eligibility_status==='eligible');
+function rankDiagnosisCatalog(products,answers,includeReview=false){
+ const eligible=products.filter(x=>x.eligibility_status==='eligible'||(includeReview&&x.eligibility_status==='review_required'));
  if(!validDiagnosisAnswers(answers))return eligible;
  const evidence=new Map(eligible.map(x=>[x.product_code,diagnosisEvidence(x,answers)]));
  return eligible.sort((a,b)=>{

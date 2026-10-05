@@ -24,14 +24,14 @@ h2{font-family:serif;font-size:23px;line-height:1.55;margin:0 0 22px}.choices{di
 </style>
 </head>
 <body><main>
-<header class="hero"><div class="eyebrow">CARAT SEEK · SAKE DISCOVERY</div><h1>あなたの好みに、<br>日本酒との新しい出会いを。</h1><p>まずは3問。料理や過ごし方から、<br>今のあなたに近い酒どころをご案内します。</p><nav class="hero-nav"><a href="#quiz">3問の診断をはじめる ↓</a><a href="./zenshu/index.html">全酒から探す ↗</a></nav></header>
+<header class="hero"><div class="eyebrow">CARAT SEEK · SAKE DISCOVERY</div><h1>あなたの好みに、<br>日本酒との新しい出会いを。</h1><p>味わいと料理から、気になる一本を。<br>迷ったら、3問の酒どころ診断も試せます。</p><nav class="hero-nav"><a href="./zenshu/index.html#explore">味・料理から一本を探す ↗</a><a href="#quiz">迷ったら3問の診断へ ↓</a></nav></header>
 <section class="panel" aria-live="polite">
   <a class="catalog-entry" href="./zenshu/index.html"><div><strong>今夜の料理から、一本を選ぶ。</strong><small>全酒の日本酒候補を、味わい・料理で検索</small></div><span aria-hidden="true">↗</span></a>
   <div id="quiz"><p class="quiz-label" id="quizStep">SAKE DISCOVERY / 1 OF 3</p><div class="progress" aria-label="進み具合"><span></span><span></span><span></span></div><h2 id="question"></h2><div class="choices" id="choices"></div></div>
   <div id="result" class="result hidden"><div class="tag">あなたに近い酒どころ</div><div class="place" id="place"></div><p id="description"></p><p id="saveStatus" class="save-warning hidden" role="alert"></p><div id="candidates" class="candidates"></div><a class="primary" href="https://line.me/R/ti/p/@881rdcdg">LINEで友だちになって続きを見る</a><button class="secondary" id="restartDiagnosis" type="button">もう一度診断する</button><a class="secondary" href="https://jummai-mugen.com/">ロブ6の販売ページへ戻る</a><p class="note" id="syncPrivacyNote">第一段として、蔵元公式情報で確認した各地域3本をご案内しています。診断結果はこの端末のブラウザ内だけに保存します。LINE友だち追加の5%クーポンは販売開始に合わせてご案内します。</p></div>
-  <div class="search-box" id="searchBox"><h2>日本酒をキーワードで探す</h2><p>蔵元公式情報で確認した9本を検索できます。さらに多くの銘柄は、全酒の検索ページで味わいや料理から探せます。</p><div class="search-row"><input id="sakeSearch" type="search" placeholder="例：辛口、伏見、白鶴" aria-label="日本酒の検索語"><button id="sakeSearchButton" type="button">検索</button></div><div id="searchResults" class="search-results" aria-live="polite"></div><a class="secondary" href="./zenshu/index.html">全酒の日本酒候補を探す</a></div>
+  <details><summary style="cursor:pointer;font-size:18px;padding:16px 0">酒どころの代表銘柄9本を調べる</summary><div class="search-box" id="searchBox"><h2>酒どころの代表銘柄</h2><p>蔵元公式情報で確認した9本を検索できます。多くの銘柄から選ぶ場合は、味・料理から探す画面をご利用ください。</p><div class="search-row"><input id="sakeSearch" type="search" placeholder="例：辛口、伏見、白鶴" aria-label="日本酒の検索語"><button id="sakeSearchButton" type="button">検索</button></div><div id="searchResults" class="search-results" aria-live="polite"></div><a class="secondary" href="./zenshu/index.html#explore">味・料理から一本を探す</a></div></details>
   <div class="route-box"><h2>ロブ6・ロブ6+1のご案内</h2><article class="route-card"><p>4本セットは、11月15日ごろに予約受付を始める予定です。</p><a class="primary" href="https://line.me/R/ti/p/@881rdcdg">LINEで予約開始の案内を受け取る</a></article></div>
-  <div class="research-box"><h2>データの裏付け</h2><p>酒類総合研究所が公開する、全国新酒鑑評会の分析資料を参照情報として確認しています。</p><a href="https://www.nrib.go.jp/data/kan/shinshu/analysis.html" target="_blank" rel="noopener noreferrer">全国新酒鑑評会 出品酒の分析結果</a><p class="caution">分析値は国税局単位などの集計です。個々の商品を評価する数値としては使用しません。</p></div>
+  <div class="research-box"><h2>掲載情報の出典</h2><p>3問診断の9本は蔵元公式情報、全酒の検索は全酒の商品情報を掲載しています。料理のヒントは、商品説明の言葉から考えた一般的な合わせ方です。</p><p>酒類総合研究所が公開する、全国新酒鑑評会の分析資料を参照情報として確認しています。</p><a href="https://www.nrib.go.jp/data/kan/shinshu/analysis.html" target="_blank" rel="noopener noreferrer">全国新酒鑑評会 出品酒の分析結果</a><p class="caution">分析値は国税局単位などの集計です。個々の商品を評価する数値としては使用しません。</p></div>
 </section><p class="note" style="text-align:center"><a href="https://jummai.stores.jp/privacy_policy" target="_blank" rel="noopener noreferrer">プライバシーポリシー</a></p><div class="brand">じゅんまいムゲン</div>
 </main>
 <script src="sake-db.js?v=20260905-1"></script>
@@ -96,19 +96,25 @@ function searchSake(){
  if(!hits.length){const empty=document.createElement('div');empty.className='search-empty';empty.textContent='該当する候補はありません。別の短い言葉でお試しください。';root.append(empty);return;}
  hits.forEach(item=>root.append(makeSakeCard(item)));
 }
+function showSaveStatus(saved,status){
+ const el=document.getElementById('saveStatus');el.classList.remove('hidden');el.dataset.syncStatus=status;
+ if(!saved){el.textContent='この端末に保存できませんでした。結果は表示できますが、再読み込み後には残りません。';return}
+ const labels={sent:'LINEアカウントに診断結果を保存しました。',checking:'このブラウザに保存しました。LINEへの保存状況を確認しています。',login_required:'このブラウザに保存しました。LINEには保存していません。LINE内でログインして診断すると、アカウントに保存できます。',pending:'このブラウザに保存しました。LINEへの保存は未完了です。通信状況を確認してから再度開いてください。',unknown:'このブラウザに保存しました。LINEへの保存結果を確認できませんでした。',saved_local:'このブラウザに診断結果を保存しました。'};
+ el.textContent=labels[status]||'このブラウザに保存しました。LINEへの保存は確認できていません。';
+}
 function saveDiagnosis(best){
  const record={version:2,answers:selectedAnswers.slice(),scores:{...scores},result:best,savedAt:new Date().toISOString()};
  try{
   localStorage.setItem(DIAGNOSIS_STORAGE_KEY,JSON.stringify(record));
-  // 診断は端末内へ保存するだけ。5%クーポンは友だち追加時に別処理する。
+  // Local receipt and identity-bound LINE receipt are separate states.
   if(window.CaratRewards){
-   if(window.CaratLiffSync)window.CaratLiffSync.recordCurrent(record,window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage).catch(()=>{});
+   if(window.CaratLiffSync){const update=status=>{if(localStorage.getItem(DIAGNOSIS_STORAGE_KEY)===JSON.stringify(record))showSaveStatus(true,status)};const timer=setTimeout(()=>update('unknown'),15000);window.CaratLiffSync.recordCurrent(record,window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage).then(result=>{clearTimeout(timer);update(result.status)}).catch(()=>{clearTimeout(timer);update('unknown')});}
    else window.CaratRewards.recordDiagnosis(record,window.CARAT_INTEGRATION_CONFIG,localStorage);
   }
   return true;
  }catch(error){return false}
 }
-function answer(key){selectedAnswers.push(key);scores[key]++;step++;if(step<questions.length)return render();const leaders=Object.keys(scores).filter(k=>scores[k]===Math.max(...Object.values(scores)));const best=leaders.includes(selectedAnswers[1])?selectedAnswers[1]:leaders[0];const saved=saveDiagnosis(best);const saveStatus=document.getElementById('saveStatus');saveStatus.classList.toggle('hidden',saved);saveStatus.textContent=saved?'':'診断結果をこの端末へ保存できませんでした。結果は表示できますが、再読み込み後には残りません。ブラウザの保存設定をご確認ください。';document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('place').textContent=results[best][0];document.getElementById('description').textContent=(leaders.length>1?'今回は3地域が同点。味の回答を優先して、散策の入口をご案内します。':'3問の回答から選ぶ、酒どころ巡りの入口です。')+' 地域内でも銘柄ごとに味は異なります。';showCandidates(best)}
+function answer(key){selectedAnswers.push(key);scores[key]++;step++;if(step<questions.length)return render();const leaders=Object.keys(scores).filter(k=>scores[k]===Math.max(...Object.values(scores)));const best=leaders.includes(selectedAnswers[1])?selectedAnswers[1]:leaders[0];const saved=saveDiagnosis(best);showSaveStatus(saved,window.CARAT_INTEGRATION_CONFIG?.bridge?.enabled&&window.CaratLiffSync&&window.CaratRewards?'checking':'saved_local');document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('place').textContent=results[best][0];document.getElementById('description').textContent=(leaders.length>1?'今回は3地域が同点。味の回答を優先して、散策の入口をご案内します。':'3問の回答から選ぶ、酒どころ巡りの入口です。')+' 地域内でも銘柄ごとに味は異なります。';showCandidates(best)}
 render();
 // 前回の同期が未完了なら、次回表示時にも安全に再試行する。sent済みは再送しない。
 if(window.CaratLiffSync&&window.CaratRewards)window.CaratLiffSync.syncLatest(window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage);

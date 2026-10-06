@@ -31,7 +31,7 @@
 <div class="filters-line"><details id="filters"><summary>もっと絞り込む</summary><div class="filters"><label>酒の種類<select id="kind"><option value="">すべての種類</option><option value="New">New</option><option value="どぶろく">どぶろく</option><option value="にごり酒">にごり酒</option><option value="カタログ未掲載">カタログ未掲載</option><option value="メーカー上代変更">メーカー上代変更</option><option value="吟醸酒">吟醸酒</option><option value="大吟醸酒">大吟醸酒</option><option value="日本酒大容量パック">日本酒大容量パック</option><option value="普通酒">普通酒</option><option value="樽酒">樽酒</option><option value="清酒スパークリング">清酒スパークリング</option><option value="特別純米酒">特別純米酒</option><option value="純米吟醸酒">純米吟醸酒</option><option value="純米大吟醸酒">純米大吟醸酒</option><option value="純米酒">純米酒</option></select></label><label>味わい<select id="taste"><option value="">すべての味わい</option><option value="すっきり">すっきり</option><option value="キレ">キレ</option><option value="フルーティ">フルーティ</option><option value="旨口">旨口</option><option value="淡麗">淡麗</option><option value="濃厚">濃厚</option><option value="濃醇">濃醇</option><option value="爽やか">爽やか</option><option value="甘口">甘口</option><option value="芳醇">芳醇</option><option value="華やか">華やか</option><option value="辛口">辛口</option></select></label><label>容量<select id="capacity"><option value="">すべての容量</option><option value="small">720ml以下</option><option value="large">720ml超</option></select></label><label>検索の一致条件<select id="mode"><option value="and">すべての言葉を含む</option><option value="or">いずれかを含む</option></select></label><label>掲載対象<select id="review"><option value="eligible">日本酒の候補</option><option value="review_required">分類を確認中の商品</option><option value="all">両方表示</option></select></label></div></details><button id="reset-filters" class="reset" type="button">条件をリセット</button></div>
 <div id="active-conditions" class="active-conditions" aria-label="選んだ条件"></div>
 <details class="search-help" id="search-help"><summary>検索条件の見方</summary><p id="search-rule" class="summary" aria-live="polite"></p></details>
-<div class="results-heading"><div><h2>検索結果</h2><div class="summary" id="summary" role="status" aria-live="polite"></div></div><select id="sort" aria-label="並び順"><option value="source">掲載順</option><option value="name">商品名順</option><option value="capacity">容量の小さい順</option></select></div>
+<div class="results-heading"><div><h2>検索結果</h2><div class="summary" id="summary" role="status" aria-live="polite"></div></div><select id="sort" aria-label="並び順"><option value="source">掲載順</option><option value="popular" disabled>人気順（評価件数）</option><option value="name">商品名順</option><option value="capacity">容量の小さい順</option></select></div>
 <div class="grid" id="list"></div><div class="more"><button type="button" id="more">さらに24件を見る</button></div>
 <div class="catalog-source"><a href="https://zensyu.jpn.com/" target="_blank" rel="noopener noreferrer">商品情報：全酒 ↗</a></div>
 <footer class="footer"><span>じゅんまいムゲン ／ CARAT SEEK</span><span>お酒は20歳になってから。飲酒運転は法律で禁止されています。</span></footer></main>
@@ -98,7 +98,7 @@ function updateTray(){ $('tray-count').textContent=`候補 ${selected.size} / 5�
 function toggle(code){if(selected.has(code))selected.delete(code);else if(selected.size<maxSelection)selected.add(code);save();updateTray()}
 function imageTag(x,loading='lazy'){const url=safeURL(x.image_url,true);return url?`<img loading="${loading}" src="${esc(url)}" alt="${esc(x.name)}">`:'<span>商品画像なし</span>'}
 function card(x){return `<article class="sake"><button class="image-button" type="button" data-detail="${esc(x.product_code)}" aria-label="${esc(x.name)}の詳細">${imageTag(x)}</button><div class="body"><div class="category">${esc(x.subcategories.slice(0,2).join(' / '))}</div><h3>${esc(x.name)}</h3><div class="meta">${x.capacity_ml?esc(x.capacity_ml)+'ml':'容量記載なし'} ${x.eligibility_status==='review_required'?'分類確認中':''}</div><div class="tags">${(x.taste_keywords||[]).length?x.taste_keywords.map(t=>`<span class="tag">${esc(t)}</span>`).join(''):'<span class="meta">味わい情報は商品ページへ</span>'}</div><div class="food-caption">${pairing(x)?'つまみ：'+esc(pairing(x).label):''}</div><div class="card-actions"><button class="detail-button" type="button" data-detail="${esc(x.product_code)}">この一本を見る</button><button class="pick" data-code="${esc(x.product_code)}" type="button"></button></div></div></article>`}
-function render(resetPage=true){if(resetPage)shownLimit=pageSize;const tokens=searchWords(q.value),omissions=searchWords(exclude.value);filtered=rows.filter(x=>{const hay=searchableProduct(x);return fitsExplorer(x)&&(review.value==='all'||x.eligibility_status===review.value)&&(!kind.value||x.subcategories.includes(kind.value))&&(!taste.value||x.taste_keywords.includes(taste.value))&&(!meal||matchesMeal(x,meal))&&(!capacity.value||(Number(x.capacity_ml)>0&&(capacity.value==='small'?x.capacity_ml<=720:x.capacity_ml>720)))&&queryMatches(hay,tokens,omissions)});if(validDiagnosisAnswers(diagnosisAnswers)&&sort.value==='source')filtered=rankDiagnosisCatalog(filtered,diagnosisAnswers,true);if(explorerActive&&sort.value==='source')filtered.sort((a,b)=>preferenceScore(b)-preferenceScore(a));if(sort.value==='name')filtered.sort((a,b)=>a.name.localeCompare(b.name,'ja'));if(sort.value==='capacity')filtered.sort((a,b)=>(a.capacity_ml||Infinity)-(b.capacity_ml||Infinity));summary.textContent=`${filtered.length}件 ／ ${Math.min(filtered.length,shownLimit)}件を表示`;summary.dataset.total=filtered.length;list.innerHTML=filtered.slice(0,shownLimit).map(card).join('')||'<div class="empty"><h3>条件に合う一本が見つかりませんでした</h3><p>選んだ条件を一つずつ外すか、短い言葉で探してみてください。</p><button type="button" data-relax>味・料理などの絞り込みを外す</button><button type="button" data-reset>条件をリセット</button></div>';$('more').hidden=shownLimit>=filtered.length;document.querySelectorAll('[data-taste]').forEach(b=>b.setAttribute('aria-pressed',String(taste.value===b.dataset.taste)));document.querySelectorAll('[data-meal]').forEach(b=>b.setAttribute('aria-pressed',String(meal===b.dataset.meal)));updateTray();updateExplorer();writeURL()}
+function render(resetPage=true){if(resetPage)shownLimit=pageSize;const tokens=searchWords(q.value),omissions=searchWords(exclude.value);filtered=rows.filter(x=>{const hay=searchableProduct(x);return fitsExplorer(x)&&(review.value==='all'||x.eligibility_status===review.value)&&(!kind.value||x.subcategories.includes(kind.value))&&(!taste.value||x.taste_keywords.includes(taste.value))&&(!meal||matchesMeal(x,meal))&&(!capacity.value||(Number(x.capacity_ml)>0&&(capacity.value==='small'?x.capacity_ml<=720:x.capacity_ml>720)))&&queryMatches(hay,tokens,omissions)});if(validDiagnosisAnswers(diagnosisAnswers)&&sort.value==='source')filtered=rankDiagnosisCatalog(filtered,diagnosisAnswers,true);if(explorerActive&&sort.value==='source')filtered.sort((a,b)=>preferenceScore(b)-preferenceScore(a));if(sort.value==='popular'&&window.CaratReviews)filtered.sort(CaratReviews.compare);if(sort.value==='name')filtered.sort((a,b)=>a.name.localeCompare(b.name,'ja'));if(sort.value==='capacity')filtered.sort((a,b)=>(a.capacity_ml||Infinity)-(b.capacity_ml||Infinity));summary.textContent=`${filtered.length}件 ／ ${Math.min(filtered.length,shownLimit)}件を表示`;summary.dataset.total=filtered.length;list.innerHTML=filtered.slice(0,shownLimit).map(card).join('')||'<div class="empty"><h3>条件に合う一本が見つかりませんでした</h3><p>選んだ条件を一つずつ外すか、短い言葉で探してみてください。</p><button type="button" data-relax>味・料理などの絞り込みを外す</button><button type="button" data-reset>条件をリセット</button></div>';$('more').hidden=shownLimit>=filtered.length;document.querySelectorAll('[data-taste]').forEach(b=>b.setAttribute('aria-pressed',String(taste.value===b.dataset.taste)));document.querySelectorAll('[data-meal]').forEach(b=>b.setAttribute('aria-pressed',String(meal===b.dataset.meal)));updateTray();updateExplorer();writeURL()}
 function reset(){diagnosisAnswers=[];q.value='';exclude.value='';kind.value='';taste.value='';capacity.value='';review.value='eligible';mode.value='and';sort.value='source';meal='';resetExplorer();render()}
 function sourceLink(x){const url=safeURL(x.source_url);return url?`<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">全酒の商品情報を見る ↗</a>`:''}
 function showDetail(x,trigger){const p=pairing(x);$('dialog-content').innerHTML=`<div class="detail-layout"><div class="detail-image">${imageTag(x,'eager')}</div><div><div class="eyebrow">SAKE PROFILE / ${esc(x.product_code)}</div><h2 id="dialog-title">${esc(x.name)}</h2><div class="meta">${esc(x.subcategories.join(' / '))} · ${x.capacity_ml?esc(x.capacity_ml)+'ml':'容量確認中'}</div><div class="detail-profile"></div><div class="pairing"><h3>今夜のつまみのヒント</h3><p>${esc(foodText(x))}</p></div><div class="detail-actions">${sourceLink(x)}<button class="pick" data-code="${esc(x.product_code)}" type="button"></button></div></div></div>`;openDialog(trigger);updateTray()}
@@ -243,4 +243,102 @@ if(requestedProduct&&byCode.has(requestedProduct)){
  const trigger=[...list.querySelectorAll('[data-detail]')].find(b=>b.dataset.detail===requestedProduct)||q;
  showDetail(byCode.get(requestedProduct),trigger);
 }
+</script><script>
+(function () {
+ 'use strict';
+ const endpoint='https://carat-bridge.jummai-mugen.workers.dev/v1/reviews';
+ const liffId='2011820244-hTjEpICO';
+ const stats=new Map();let ready=false,failed=false,identityPromise;
+ const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ async function api(path,options={}) {
+  const response=await fetch(endpoint+path,{...options,signal:AbortSignal.timeout(12000)});
+  if(!response.ok)throw new Error(response.status===401?'認証を更新してください。':response.status===429?'少し間をあけて、もう一度保存してください。':'読み込み・保存ができませんでした。もう一度お試しください。');
+  return response.json();
+ }
+ function badge(code) {
+  if(!ready)return '<span class="review-metric">'+(failed?'評価を取得できません':'評価を読み込み中')+'</span>';
+  const value=stats.get(code);
+  if(!value?.count)return '<span class="review-metric">☆☆☆☆☆ <small>評価なし</small></span>';
+  const average=Number(value.average);
+  return `<span class="review-metric"><span class="review-stars" aria-hidden="true">☆☆☆☆☆<span style="width:${average/5*100}%">★★★★★</span></span> <b>${average.toFixed(1)}</b><small>（${value.count}件）</small></span>`;
+ }
+ function updateBadges() {
+  document.querySelectorAll('[data-review-code]').forEach(el=>{const html=badge(el.dataset.reviewCode);if(el.innerHTML!==html)el.innerHTML=html});
+ }
+ async function loadSummary() {
+  const data=await api('/summary');
+  if(!Array.isArray(data.products))throw new Error('評価を取得できませんでした。');
+  for(const row of data.products){if(!Number.isInteger(row.count)||row.count<1||!Number.isFinite(row.average)||row.average<1||row.average>5)throw new Error('評価を取得できませんでした。')}
+  stats.clear();data.products.forEach(row=>stats.set(row.productCode,row));ready=true;updateBadges();
+ }
+ async function identity() {
+  if(!identityPromise)identityPromise=(async()=>{
+   if(!window.liff)await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://static.line-scdn.net/liff/edge/2/sdk.js';script.onload=resolve;script.onerror=reject;document.head.append(script)});
+   await window.liff.init({liffId});return window.liff;
+  })().catch(error=>{identityPromise=null;throw error});
+  return identityPromise;
+ }
+ function attachPanel(container,code) {
+  const panel=document.createElement('section');panel.className='review-panel';
+  panel.innerHTML=`<h3>みんなの評価・感想</h3><div data-review-code="${escape(code)}">${badge(code)}</div><div class="public-comments" aria-live="polite">感想を読み込み中</div><form><fieldset><legend>このお酒の評価</legend><div class="rating-input" role="radiogroup" aria-label="5段階評価">${[1,2,3,4,5].map(n=>`<label><input type="radio" name="rating" value="${n}" required><span aria-hidden="true">☆</span><span class="sr-only">${n}点</span></label>`).join('')}</div></fieldset><label class="comment-label">感想コメント（任意）<textarea name="comment" rows="3" maxlength="500" placeholder="味や、合わせた料理の感想をどうぞ"></textarea></label><p class="review-policy">評価は公開されます。コメントは確認後に掲載します。個人情報は書かないでください。</p><button type="button" class="review-login">LINEでログイン</button><button type="submit">評価を保存</button><p class="review-status" role="status"></p></form>`;
+  container.append(panel);
+  const form=panel.querySelector('form'),status=panel.querySelector('.review-status'),comments=panel.querySelector('.public-comments');let inputVersion=0,restoreVersion=0;
+  form.addEventListener('input',()=>inputVersion++);
+  const paintStars=()=>{const score=Number(new FormData(form).get('rating'));panel.querySelectorAll('.rating-input label').forEach((el,i)=>el.querySelector('[aria-hidden]').textContent=i<score?'★':'☆')};
+  form.addEventListener('change',paintStars);
+  async function restore() {
+   const startedInput=inputVersion,startedRestore=++restoreVersion;
+   const sdk=await identity();
+   if(!sdk.isLoggedIn()){sdk.login({redirectUri:location.href});return}
+   const token=sdk.getIDToken();if(!token)throw new Error('LINEの認証を更新してください。');
+   const data=await api('/'+encodeURIComponent(code)+'/mine',{headers:{authorization:'Bearer '+token}});
+   if(!panel.isConnected||startedRestore!==restoreVersion)return;
+   if(inputVersion!==startedInput){status.textContent='入力中の内容を保持しました。';return}
+   if(data.review){form.elements.rating.value=String(data.review.rating);form.elements.comment.value=data.review.comment;paintStars();status.textContent='保存済みの評価を読み込みました。'}else status.textContent='LINEでログインしました。評価を選んで保存してください。';
+   panel.querySelector('.review-login').textContent='自分の評価を読み込む';
+  }
+  panel.querySelector('.review-login').onclick=()=>restore().catch(()=>{if(panel.isConnected)status.textContent='LINEに接続できませんでした。もう一度お試しください。'});
+  form.onsubmit=async event=>{
+   event.preventDefault();const submit=form.querySelector('[type=submit]'),startedInput=inputVersion,value={rating:Number(new FormData(form).get('rating')),comment:form.elements.comment.value};restoreVersion++;submit.disabled=true;status.textContent='保存しています…';
+   try {
+    const sdk=await identity();if(!sdk.isLoggedIn()){status.textContent='先に「LINEでログイン」を押してください。';return}
+    const token=sdk.getIDToken();if(!token)throw new Error('LINEの認証を更新してください。');
+    const result=await api('/'+encodeURIComponent(code),{method:'PUT',headers:{authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify(value)});
+    if(result.status!=='saved'||result.review?.rating!==value.rating||result.review?.comment!==value.comment.trim())throw new Error('保存結果を確認できませんでした。');
+    if(panel.isConnected)status.textContent=inputVersion!==startedInput?'送信した評価を保存しました。変更中の入力はまだ保存されていません。':(value.comment.trim()?'評価を保存しました。コメントは確認後に掲載します。':'評価を保存しました。');
+    try{await loadSummary()}catch(_){if(panel.isConnected)status.textContent+=' 最新の集計は再読み込みで確認してください。'}
+   }catch(error){if(panel.isConnected)status.textContent=error.message||'保存できませんでした。'}finally{if(panel.isConnected)submit.disabled=false}
+  };
+  api('/'+encodeURIComponent(code)).then(data=>{
+   if(!panel.isConnected)return;
+   comments.replaceChildren();
+   if(!data.comments.length){comments.textContent='まだ感想はありません。';return}
+   data.comments.forEach(item=>{const block=document.createElement('blockquote');block.textContent=item.comment;comments.append(block)});
+  }).catch(()=>{if(panel.isConnected)comments.textContent='感想を取得できませんでした。'});
+ }
+ function decorateCards() {
+  document.querySelectorAll('.sake,.sake-card').forEach(card=>{
+   if(card.querySelector('[data-review-code]'))return;
+   const code=card.dataset.code||card.querySelector('[data-detail]')?.dataset.detail;
+   const heading=card.querySelector('h3,h4');if(!code||!heading)return;
+   const metric=document.createElement('div');metric.dataset.reviewCode=code;metric.innerHTML=badge(code);heading.after(metric);
+  });
+ }
+ const style=document.createElement('style');style.textContent=`.review-panel{border-top:1px solid #ccd4cd;margin-top:28px;padding-top:20px}.review-metric{display:inline-flex;gap:6px;align-items:center;color:#80622d;font-size:17px;margin:6px 0}.review-metric small{color:#59696c;font-size:14px}.review-stars{position:relative;display:inline-block;white-space:nowrap;font-size:21px;line-height:1.5}.review-stars>span{position:absolute;left:0;top:0;overflow:hidden;color:#a67214}.review-panel fieldset{border:0;margin:16px 0;padding:0}.rating-input{display:flex;gap:8px}.rating-input label{display:grid;place-items:center;position:relative;min-width:44px;min-height:48px;border:1px solid #bdc9bc;border-radius:8px;cursor:pointer;color:#956315;font-size:30px}.rating-input input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}.rating-input label:focus-within{outline:3px solid #b77f26}.comment-label{display:grid;gap:8px}.review-panel textarea{font:inherit;width:100%;max-width:100%;border:1px solid #bdc9bc;border-radius:8px;padding:12px;resize:vertical}.review-policy{font-size:14px!important;color:#59696c}.review-panel form>button{margin:8px 8px 0 0;max-width:100%;white-space:normal}.review-status{font-size:15px!important}.public-comments blockquote{margin:12px 0;padding:12px;border-left:3px solid #b08b4e;white-space:pre-wrap;overflow-wrap:anywhere}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}`;document.head.append(style);
+ window.CaratReviews={badge,attachPanel,compare:(a,b)=>(stats.get(b.product_code)?.count||0)-(stats.get(a.product_code)?.count||0)||(stats.get(b.product_code)?.average||0)-(stats.get(a.product_code)?.average||0)};
+ decorateCards();new MutationObserver(decorateCards).observe(document.body,{subtree:true,childList:true});
+ loadSummary().then(()=>{
+  const option=document.querySelector('#sort option[value=popular]');if(option)option.disabled=false;
+  if(typeof render==='function'&&document.getElementById('sort')?.value==='popular')render(false);
+ }).catch(()=>{
+  failed=true;
+  document.querySelectorAll('[data-review-code]').forEach(el=>el.textContent='評価を取得できません');
+  const selector=document.getElementById('sort');if(selector?.value==='popular'){selector.value='source';render(false)}
+ });
+})();
+
+const reviewDetail=showDetail,reviewCompare=showCompare;
+showDetail=(x,trigger)=>{reviewDetail(x,trigger);CaratReviews.attachPanel($('dialog-content'),x.product_code)};
+showCompare=trigger=>{reviewCompare(trigger);const picks=[...selected];document.querySelectorAll('.compare-item').forEach((el,i)=>{const metric=document.createElement('div');metric.dataset.reviewCode=picks[i];metric.innerHTML=CaratReviews.badge(picks[i]);el.querySelector('h3').after(metric)})};
+if(dialog.open&&detailProduct)CaratReviews.attachPanel($('dialog-content'),detailProduct);
 </script></body></html>

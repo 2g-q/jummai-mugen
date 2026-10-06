@@ -119,4 +119,4 @@ render();
 // 前回の同期が未完了なら、次回表示時にも安全に再試行する。sent済みは再送しない。
 if(window.CaratLiffSync&&window.CaratRewards)window.CaratLiffSync.syncLatest(window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage);
 document.getElementById('restartDiagnosis').addEventListener('click',()=>{step=0;scores={nada:0,fushimi:0,hiroshima:0};selectedAnswers=[];document.getElementById('result').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');render();document.getElementById('quiz').scrollIntoView({behavior:'smooth',block:'start'})});
-</script></body></html>
+</script><script src="reviews.js?v=20261006-1"></script></body></html>

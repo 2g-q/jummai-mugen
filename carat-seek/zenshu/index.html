@@ -373,7 +373,7 @@ function refreshSaveButtons(){document.querySelectorAll('[data-save-sake]').forE
 const libraryTray=updateTray;updateTray=()=>{libraryTray();refreshSaveButtons()};
 const libraryRender=render;
 render=(resetPage=true)=>{
- libraryRender(resetPage);
+ libraryRender(resetPage);const baseEmpty=list.innerHTML;
  if(libraryView==='saved')filtered=filtered.filter(x=>library.has(x.product_code));
  if(libraryView==='recent')filtered=filtered.filter(x=>recent.includes(x.product_code)).sort((a,b)=>recent.indexOf(a.product_code)-recent.indexOf(b.product_code));
  if(originSelect.value)filtered=filtered.filter(x=>originOf(x)===originSelect.value);
@@ -381,7 +381,7 @@ render=(resetPage=true)=>{
  if(sort.value==='origin')filtered.sort((a,b)=>(originOf(a)||'\uffff').localeCompare(originOf(b)||'\uffff','ja')||a.name.localeCompare(b.name,'ja'));
  if(sort.value==='personal')filtered.sort((a,b)=>(library.get(b.product_code)?.preference||0)-(library.get(a.product_code)?.preference||0));
  summary.textContent=`${filtered.length}件 ／ ${Math.min(filtered.length,shownLimit)}件を表示`;summary.dataset.total=filtered.length;
- list.innerHTML=filtered.slice(0,shownLimit).map(card).join('')||`<div class="library-empty"><h3>${libraryView==='saved'?'保存したお酒はありません':libraryView==='recent'?'最近見たお酒はありません':'条件に合うお酒はありません'}</h3><p>${libraryView==='saved'?'気になった一本の「♡ マイ酒リストに保存」を押してください。':'条件をリセットするか、すべてのお酒から選んでください。'}</p><button type="button" data-library-reset>すべてのお酒を見る</button></div>`;
+ list.innerHTML=filtered.slice(0,shownLimit).map(card).join('')||(libraryView==='all'&&!originSelect.value?baseEmpty:`<div class="library-empty"><h3>${libraryView==='saved'?'保存したお酒はありません':libraryView==='recent'?'最近見たお酒はありません':'条件に合うお酒はありません'}</h3><p>${libraryView==='saved'?'気になった一本の「♡ マイ酒リストに保存」を押してください。':'条件をリセットするか、すべてのお酒から選んでください。'}</p><button type="button" data-library-reset>すべてのお酒を見る</button></div>`);
  $('more').hidden=shownLimit>=filtered.length;document.querySelector('.results-heading h2').textContent=libraryView==='saved'?'マイ酒リスト':libraryView==='recent'?'最近見たお酒':'検索結果';
  libraryNote.hidden=libraryView!=='saved';libraryNav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.libraryView===libraryView)));updateTray();updateExplorer();
 };

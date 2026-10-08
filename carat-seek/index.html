@@ -117,6 +117,6 @@ function saveDiagnosis(best){
 function answer(key){selectedAnswers.push(key);scores[key]++;step++;if(step<questions.length)return render();const leaders=Object.keys(scores).filter(k=>scores[k]===Math.max(...Object.values(scores)));const best=leaders.includes(selectedAnswers[1])?selectedAnswers[1]:leaders[0];const saved=saveDiagnosis(best);showSaveStatus(saved,window.CARAT_INTEGRATION_CONFIG?.bridge?.enabled&&window.CaratLiffSync&&window.CaratRewards?'checking':'saved_local');document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('place').textContent=diagnosisStyleLabels[selectedAnswers[1]];document.getElementById('description').textContent='気になる一本の、味と料理を見てみましょう。';showCandidates(best)}
 render();
 // 前回の同期が未完了なら、次回表示時にも安全に再試行する。sent済みは再送しない。
-if(window.CaratLiffSync&&window.CaratRewards)window.CaratLiffSync.syncLatest(window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage);
+if(!new URLSearchParams(location.search).has('liff.state')&&window.CaratLiffSync&&window.CaratRewards)window.CaratLiffSync.syncLatest(window.CARAT_INTEGRATION_CONFIG,window.CaratRewards,localStorage);
 document.getElementById('restartDiagnosis').addEventListener('click',()=>{step=0;scores={nada:0,fushimi:0,hiroshima:0};selectedAnswers=[];document.getElementById('result').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');render();document.getElementById('quiz').scrollIntoView({behavior:'smooth',block:'start'})});
-</script><script src="reviews.js?v=20261006-1"></script></body></html>
+</script><script src="reviews.js?v=20261008-line1"></script></body></html>

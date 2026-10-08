@@ -1108,7 +1108,7 @@
     <p class="coupon-survey-note" data-i18n="couponNote">お酒選びのご相談や、最新のご案内をお届けします。</p>
     <div class="btn-row">
       <a class="btn-line js-line" href="https://line.me/R/ti/p/@881rdcdg" target="_blank" rel="noopener" data-i18n="surveyBtn">LINEで友だちになる</a>
-      <a class="btn-sub" href="https://line.me/R/oaMessage/%40881rdcdg" data-i18n="contactBtn">LINEでお問い合わせ</a>
+      <a class="btn-sub" href="https://line.me/R/ti/p/%40881rdcdg" data-i18n="contactBtn">LINEでお問い合わせ</a>
     </div>
   </div>
 </section>
@@ -1174,7 +1174,7 @@
     </div>
     <div class="foot-links">
       <a href="checkout/review.html#legal" data-i18n="footLaw">特定商取引法に基づく表記</a>
-      <a href="https://line.me/R/oaMessage/%40881rdcdg" data-i18n="footContact">LINEでお問い合わせ</a>
+      <a href="https://line.me/R/ti/p/%40881rdcdg" data-i18n="footContact">LINEでお問い合わせ</a>
       <a href="https://jummai.stores.jp/privacy_policy" target="_blank" rel="noopener" data-i18n="footPrivacy">プライバシーポリシー</a>
       <a href="https://jummai.stores.jp/terms" target="_blank" rel="noopener" data-i18n="footTerms">利用規約</a>
     </div>
@@ -1197,7 +1197,7 @@
   </div>
   <div class="kiki-qs" id="kikiQs"></div>
   <p class="kiki-note" data-i18n="kikiNote">ご用意した質問には自動でお答えします。</p>
-  <a class="kiki-inquiry" href="https://line.me/R/oaMessage/%40881rdcdg" data-i18n="kikiInquiry">LINEで個別のご相談を送る</a>
+  <a class="kiki-inquiry" href="https://line.me/R/ti/p/%40881rdcdg" data-i18n="kikiInquiry">LINEで個別のご相談を送る</a>
 </div>
 
 <!-- ============ 追従CTA ============ -->
@@ -1963,6 +1963,12 @@
     });
   })();
 
+</script>
+<script>
+// Keep the official QR/profile fallback on desktop, including narrow windows.
+if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)){
+  document.querySelectorAll('[data-i18n="contactBtn"],[data-i18n="footContact"],[data-i18n="kikiInquiry"]').forEach(a=>a.href='https://line.me/R/oaMessage/%40881rdcdg');
+}
 </script>
 </body>
 </html>

@@ -2,7 +2,10 @@
  'use strict';
  const endpoint='https://carat-bridge.jummai-mugen.workers.dev/v1/reviews';
  const liffId='2011820244-hTjEpICO';
- const chatUrl='https://line.me/R/oaMessage/%40881rdcdg';
+ // LINE's oaMessage scheme is mobile-only. Width is not a device signal.
+ const mobileLine=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const chatUrl=mobileLine?'https://line.me/R/oaMessage/%40881rdcdg':'https://line.me/R/ti/p/%40881rdcdg';
+ const inquiryUrl=code=>chatUrl+(mobileLine&&code?'/?'+encodeURIComponent('商品コード '+code+' についての問い合わせ\n'):'');
  const reviewUrl=code=>'https://liff.line.me/'+liffId+'/review/?product='+encodeURIComponent(code);
  const stats=new Map();let ready=false,failed=false,identityPromise;
  const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -37,7 +40,7 @@
  function attachPanel(container,code,insideLine=false) {
   if(!insideLine){
    const panel=document.createElement('section');panel.className='review-panel';
-   panel.innerHTML=`<h3>口コミ・感想</h3><div data-review-code="${escape(code)}">${badge(code)}</div><div class="review-actions"><a class="review-line" href="${reviewUrl(code)}">LINEで口コミ・感想を書く</a><a href="${chatUrl}/?${encodeURIComponent('商品コード '+code+' についての問い合わせ\n')}">このお酒についてLINEで問い合わせる</a></div>`;
+   panel.innerHTML=`<h3>口コミ・感想</h3><div data-review-code="${escape(code)}">${badge(code)}</div><div class="review-actions"><a class="review-line" href="${reviewUrl(code)}">LINEで口コミ・感想を書く</a><a href="${inquiryUrl(code)}">${mobileLine?'このお酒についてLINEで問い合わせる':'スマホのLINEで問い合わせる'}</a></div>`;
    container.append(panel);return;
   }
   const panel=document.createElement('section');panel.className='review-panel';
@@ -91,7 +94,7 @@
  }
  const style=document.createElement('style');style.textContent=`.review-panel{border-top:1px solid #ccd4cd;margin-top:28px;padding-top:20px}.review-metric{display:inline-flex;gap:6px;align-items:center;color:#80622d;font-size:17px;margin:6px 0}.review-metric small{color:#59696c;font-size:14px}.review-stars{position:relative;display:inline-block;white-space:nowrap;font-size:21px;line-height:1.5}.review-stars>span{position:absolute;left:0;top:0;overflow:hidden;color:#a67214}.review-panel fieldset{border:0;margin:16px 0;padding:0}.rating-input{display:flex;gap:8px}.rating-input label{display:grid;place-items:center;position:relative;min-width:44px;min-height:48px;border:1px solid #bdc9bc;border-radius:8px;cursor:pointer;color:#956315;font-size:30px}.rating-input input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}.rating-input label:focus-within{outline:3px solid #b77f26}.comment-label{display:grid;gap:8px}.review-panel textarea{font:inherit;width:100%;max-width:100%;border:1px solid #bdc9bc;border-radius:8px;padding:12px;resize:vertical}.review-policy{font-size:14px!important;color:#59696c}.review-panel form>button{margin:8px 8px 0 0;max-width:100%;white-space:normal}.review-status{font-size:15px!important}.public-comments blockquote{margin:12px 0;padding:12px;border-left:3px solid #b08b4e;white-space:pre-wrap;overflow-wrap:anywhere}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}`;document.head.append(style);
  const linksStyle=document.createElement('style');linksStyle.textContent='.review-actions{display:grid;gap:12px;margin-top:16px}.review-actions a{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 16px;border:1px solid #b9c9bf;border-radius:10px;text-decoration:none;text-align:center;font-size:16px;line-height:1.6;overflow-wrap:anywhere}.review-actions .review-line{background:#087b44;color:white;border-color:#087b44}';document.head.append(linksStyle);
- window.CaratReviews={badge,attachPanel,identity,reviewUrl,chatUrl,compare:(a,b)=>(stats.get(b.product_code)?.count||0)-(stats.get(a.product_code)?.count||0)||(stats.get(b.product_code)?.average||0)-(stats.get(a.product_code)?.average||0)};
+ window.CaratReviews={badge,attachPanel,identity,reviewUrl,chatUrl,mobileLine,compare:(a,b)=>(stats.get(b.product_code)?.count||0)-(stats.get(a.product_code)?.count||0)||(stats.get(b.product_code)?.average||0)-(stats.get(a.product_code)?.average||0)};
  // The LIFF primary redirect must finish before reading/rewriting liff.state.
  if(new URLSearchParams(location.search).has('liff.state')&&!document.getElementById('line-review-root'))identity().catch(()=>{
   const notice=document.createElement('p');notice.setAttribute('role','alert');notice.textContent='LINE画面を開けませんでした。LINEからもう一度開いてください。';document.body.prepend(notice);
